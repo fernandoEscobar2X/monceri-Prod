@@ -1,19 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Lock, ShieldCheck, ShoppingBag, X } from "lucide-react";
+import { ShoppingBag, X } from "lucide-react";
+import { CartItemCard } from "./cart-item";
+import { CartSummary } from "./cart-summary";
+import type { CartItem } from "./cart-types";
 
-export type CartItem = {
-  id: string;
-  phrase: string;
-  fontName: string;
-  sizeLabel: string;
-  lineCount: number;
-  colorLabel: string;
-  addOns: string[];
-  price: number;
-  qty: number;
-};
+export type { CartItem } from "./cart-types";
 
 type CartDrawerProps = {
   items: CartItem[];
@@ -22,14 +15,6 @@ type CartDrawerProps = {
   onIncrement: (id: string) => void;
   onDecrement: (id: string) => void;
 };
-
-function formatPrice(value: number) {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "MXN",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 export function CartDrawer({
   items,
@@ -96,109 +81,17 @@ export function CartDrawer({
                 </div>
               ) : (
                 items.map((item) => (
-                  <div
+                  <CartItemCard
                     key={item.id}
-                    className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm"
-                  >
-                    <div className="mb-4 rounded-[24px] bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0b0f19] p-5">
-                      <div className="text-xs font-semibold uppercase tracking-[0.28em] text-white/50">
-                        Letrero personalizado
-                      </div>
-                      <div className="mt-4 whitespace-pre-line text-3xl font-semibold text-white [text-shadow:0_0_18px_rgba(230,57,70,0.9)]">
-                        {item.phrase}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 text-sm text-gray-500">
-                      <p>
-                        <span className="font-semibold text-[#111827]">Fuente:</span>{" "}
-                        {item.fontName}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-[#111827]">Tamano:</span>{" "}
-                        {item.sizeLabel}
-                      </p>
-                      <p>
-                        <span className="font-semibold text-[#111827]">Color:</span>{" "}
-                        {item.colorLabel}
-                      </p>
-                      {item.lineCount > 1 ? (
-                        <p>
-                          <span className="font-semibold text-[#111827]">Renglones:</span>{" "}
-                          {item.lineCount}
-                        </p>
-                      ) : null}
-                      {item.addOns.length > 0 ? (
-                        <p>
-                          <span className="font-semibold text-[#111827]">Extras:</span>{" "}
-                          {item.addOns.join(", ")}
-                        </p>
-                      ) : null}
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => onDecrement(item.id)}
-                          className="inline-flex size-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
-                        >
-                          -
-                        </button>
-                        <span className="text-sm font-bold text-[#111827]">{item.qty}</span>
-                        <button
-                          type="button"
-                          onClick={() => onIncrement(item.id)}
-                          className="inline-flex size-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <span className="text-xl font-black tracking-tight text-[#111827]">
-                        {formatPrice(item.price * item.qty)}
-                      </span>
-                    </div>
-                  </div>
+                    item={item}
+                    onDecrement={onDecrement}
+                    onIncrement={onIncrement}
+                  />
                 ))
               )}
             </div>
 
-            <div className="border-t border-gray-200 px-6 py-6">
-              <div className="space-y-3 rounded-3xl bg-[#F9FAFB] p-5">
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
-                  <span className="font-semibold text-[#111827]">{formatPrice(subtotal)}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>Envio</span>
-                  <span className="font-semibold text-[#111827]">
-                    {shipping === 0 ? "Gratis" : formatPrice(shipping)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between border-t border-white pt-3 text-base text-[#111827]">
-                  <span className="font-semibold">Total</span>
-                  <span className="text-2xl font-black tracking-tight">{formatPrice(total)}</span>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-gray-500">
-                <div className="flex items-center gap-2">
-                  <Lock className="size-4 text-[#009EE3]" />
-                  <span>Pago 100% seguro</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="size-4 text-[#E63946]" />
-                  <span>Garantia de fabricacion</span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="mt-5 inline-flex h-14 w-full items-center justify-center rounded-full bg-[#E63946] px-5 text-base font-bold text-white shadow-[0_18px_34px_rgba(230,57,70,0.24)] transition hover:-translate-y-0.5"
-              >
-                Proceder al pago seguro
-              </button>
-            </div>
+            <CartSummary shipping={shipping} subtotal={subtotal} total={total} />
           </motion.aside>
         </>
       ) : null}
