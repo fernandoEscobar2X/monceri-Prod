@@ -21,6 +21,16 @@ export const productsService = {
     return product;
   },
 
+  async findActiveForOrder(id: string) {
+    const product = await productsRepository.findById(id);
+
+    if (!product || !product.active) {
+      throw new NotFoundError("Producto activo");
+    }
+
+    return product;
+  },
+
   create(input: ProductUpsertInput) {
     return productsRepository.create(input);
   },

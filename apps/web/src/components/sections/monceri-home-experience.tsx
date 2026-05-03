@@ -23,9 +23,9 @@ import {
   Type,
   X,
 } from "lucide-react";
-import { CartDrawer, type CartItem } from "@/components/cart-drawer";
+import { CartDrawer, type CartItem } from "@/components/cart/cart-drawer";
 
-const NeonShowroomCanvas = dynamic(() => import("@/components/neon-showroom-canvas"), {
+const NeonShowroomCanvas = dynamic(() => import("@/components/neon-preview/neon-showroom-canvas"), {
   ssr: false,
 });
 

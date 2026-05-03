@@ -14,6 +14,7 @@ test-results/
 *.tsbuildinfo
 uploads/
 !.gitkeep
+apps/api/secrets/*.pem
 .DS_Store
 Thumbs.db
 *.zip

@@ -11,7 +11,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prisma": "prisma",
     "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "keys:generate": "tsx scripts/generate-jwt-keys.ts"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",

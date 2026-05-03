@@ -1,5 +1,5 @@
 import type { ProductListQuery, ProductUpsertInput } from "@monceri/shared";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const includeProductRelations = {

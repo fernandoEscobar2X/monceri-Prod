@@ -22,7 +22,9 @@ function readKey(path: string) {
   const resolvedPath = resolve(process.cwd(), path);
 
   if (!existsSync(resolvedPath)) {
-    throw new Error(`Missing key file: ${resolvedPath}`);
+    throw new Error(
+      `Missing JWT key file: ${resolvedPath}. Run "pnpm --filter api keys:generate" before starting the API.`,
+    );
   }
 
   return readFileSync(resolvedPath, "utf8");
