@@ -1,0 +1,207 @@
+"use client";
+
+import { AnimatePresence, motion } from "framer-motion";
+import { Lock, ShieldCheck, ShoppingBag, X } from "lucide-react";
+
+export type CartItem = {
+  id: string;
+  phrase: string;
+  fontName: string;
+  sizeLabel: string;
+  lineCount: number;
+  colorLabel: string;
+  addOns: string[];
+  price: number;
+  qty: number;
+};
+
+type CartDrawerProps = {
+  items: CartItem[];
+  open: boolean;
+  onClose: () => void;
+  onIncrement: (id: string) => void;
+  onDecrement: (id: string) => void;
+};
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function CartDrawer({
+  items,
+  open,
+  onClose,
+  onIncrement,
+  onDecrement,
+}: CartDrawerProps) {
+  const subtotal = items.reduce((acc, item) => acc + item.price * item.qty, 0);
+  const shipping = subtotal >= 1500 || subtotal === 0 ? 0 : 180;
+  const total = subtotal + shipping;
+
+  return (
+    <AnimatePresence>
+      {open ? (
+        <>
+          <motion.button
+            aria-label="Cerrar carrito"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+
+          <motion.aside
+            className="fixed top-0 right-0 z-50 flex h-full w-full max-w-md flex-col border-l border-gray-200 bg-white shadow-2xl"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#E63946]">
+                  Checkout listo
+                </p>
+                <h2 className="font-display mt-2 text-3xl font-black tracking-tight text-[#111827]">
+                  Tu carrito
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="inline-flex size-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300 hover:text-[#111827]"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
+              {items.length === 0 ? (
+                <div className="rounded-3xl border border-dashed border-gray-200 bg-[#F9FAFB] px-6 py-10 text-left">
+                  <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-white shadow-sm">
+                    <ShoppingBag className="size-6 text-[#E63946]" />
+                  </div>
+                  <p className="font-display text-2xl font-bold tracking-tight text-[#111827]">
+                    Aun no agregas nada
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-gray-500">
+                    Configura tu letrero personalizado y agregalo al carrito para revisar el resumen.
+                  </p>
+                </div>
+              ) : (
+                items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm"
+                  >
+                    <div className="mb-4 rounded-[24px] bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0b0f19] p-5">
+                      <div className="text-xs font-semibold uppercase tracking-[0.28em] text-white/50">
+                        Letrero personalizado
+                      </div>
+                      <div className="mt-4 whitespace-pre-line text-3xl font-semibold text-white [text-shadow:0_0_18px_rgba(230,57,70,0.9)]">
+                        {item.phrase}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm text-gray-500">
+                      <p>
+                        <span className="font-semibold text-[#111827]">Fuente:</span>{" "}
+                        {item.fontName}
+                      </p>
+                      <p>
+                        <span className="font-semibold text-[#111827]">Tamano:</span>{" "}
+                        {item.sizeLabel}
+                      </p>
+                      <p>
+                        <span className="font-semibold text-[#111827]">Color:</span>{" "}
+                        {item.colorLabel}
+                      </p>
+                      {item.lineCount > 1 ? (
+                        <p>
+                          <span className="font-semibold text-[#111827]">Renglones:</span>{" "}
+                          {item.lineCount}
+                        </p>
+                      ) : null}
+                      {item.addOns.length > 0 ? (
+                        <p>
+                          <span className="font-semibold text-[#111827]">Extras:</span>{" "}
+                          {item.addOns.join(", ")}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => onDecrement(item.id)}
+                          className="inline-flex size-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
+                        >
+                          -
+                        </button>
+                        <span className="text-sm font-bold text-[#111827]">{item.qty}</span>
+                        <button
+                          type="button"
+                          onClick={() => onIncrement(item.id)}
+                          className="inline-flex size-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-gray-300"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="text-xl font-black tracking-tight text-[#111827]">
+                        {formatPrice(item.price * item.qty)}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="border-t border-gray-200 px-6 py-6">
+              <div className="space-y-3 rounded-3xl bg-[#F9FAFB] p-5">
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>Subtotal</span>
+                  <span className="font-semibold text-[#111827]">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>Envio</span>
+                  <span className="font-semibold text-[#111827]">
+                    {shipping === 0 ? "Gratis" : formatPrice(shipping)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-t border-white pt-3 text-base text-[#111827]">
+                  <span className="font-semibold">Total</span>
+                  <span className="text-2xl font-black tracking-tight">{formatPrice(total)}</span>
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-2">
+                  <Lock className="size-4 text-[#009EE3]" />
+                  <span>Pago 100% seguro</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="size-4 text-[#E63946]" />
+                  <span>Garantia de fabricacion</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="mt-5 inline-flex h-14 w-full items-center justify-center rounded-full bg-[#E63946] px-5 text-base font-bold text-white shadow-[0_18px_34px_rgba(230,57,70,0.24)] transition hover:-translate-y-0.5"
+              >
+                Proceder al pago seguro
+              </button>
+            </div>
+          </motion.aside>
+        </>
+      ) : null}
+    </AnimatePresence>
+  );
+}

@@ -1,0 +1,82 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="800" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111214"/>
+      <stop offset="1" stop-color="#060709"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="800" y1="20" x2="800" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#303134"/>
+      <stop offset="1" stop-color="#191A1D"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="800" y1="0" x2="800" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8F7A55"/>
+      <stop offset="1" stop-color="#43311F"/>
+    </linearGradient>
+    <linearGradient id="couchBase" x1="800" y1="710" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4A4B4F"/>
+      <stop offset="1" stop-color="#2A2A2D"/>
+    </linearGradient>
+    <linearGradient id="cushion" x1="800" y1="610" x2="800" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5A5B60"/>
+      <stop offset="1" stop-color="#35363A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1072 164) rotate(90) scale(212 356)">
+      <stop stop-color="#E63946" stop-opacity="0.65"/>
+      <stop offset="1" stop-color="#E63946" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="brandPattern" x="0" y="0" width="360" height="220" patternUnits="userSpaceOnUse">
+      <text x="10" y="70" fill="#FFFFFF" fill-opacity="0.035" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700" transform="rotate(-12 10 70)">MONCERI</text>
+      <text x="110" y="160" fill="#FFFFFF" fill-opacity="0.028" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" transform="rotate(-12 110 160)">VISIBLE</text>
+    </pattern>
+    <filter id="shadow" x="84" y="34" width="1432" height="798" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="10"/>
+      <feGaussianBlur stdDeviation="12"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.45 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1600" height="690" fill="url(#brandPattern)"/>
+  <ellipse cx="1072" cy="164" rx="356" ry="212" fill="url(#glow)"/>
+
+  <path d="M0 0H95L120 690H0V0Z" fill="#0C0D0F" fill-opacity="0.88"/>
+  <path d="M0 0H55L40 690H0V0Z" fill="#050607" fill-opacity="0.92"/>
+
+  <g filter="url(#shadow)">
+    <rect x="138" y="34" width="286" height="470" fill="url(#panel)"/>
+    <rect x="476" y="34" width="620" height="470" fill="url(#panel)"/>
+    <rect x="1148" y="34" width="286" height="470" fill="url(#panel)"/>
+    <rect x="138" y="34" width="286" height="470" stroke="url(#gold)" stroke-width="3"/>
+    <rect x="476" y="34" width="620" height="470" stroke="url(#gold)" stroke-width="3"/>
+    <rect x="1148" y="34" width="286" height="470" stroke="url(#gold)" stroke-width="3"/>
+  </g>
+
+  <rect x="108" y="520" width="1384" height="12" fill="#211B19"/>
+  <rect x="108" y="548" width="1384" height="42" fill="#17181B"/>
+  <rect x="108" y="598" width="1384" height="16" fill="#211B19"/>
+
+  <rect x="0" y="690" width="1600" height="310" fill="#0A0A0C"/>
+
+  <path d="M246 760C246 726.863 272.863 700 306 700H1294C1327.14 700 1354 726.863 1354 760V932H246V760Z" fill="url(#cushion)"/>
+  <path d="M190 805C190 768.549 219.549 739 256 739H1344C1380.45 739 1410 768.549 1410 805V1000H190V805Z" fill="url(#couchBase)"/>
+
+  <path d="M238 815C238 785.729 261.729 762 291 762H519C548.271 762 572 785.729 572 815V948H238V815Z" fill="#414247"/>
+  <path d="M1028 815C1028 785.729 1051.73 762 1081 762H1309C1338.27 762 1362 785.729 1362 815V948H1028V815Z" fill="#414247"/>
+
+  <path d="M318 724C318 695.281 341.281 672 370 672H700C728.719 672 752 695.281 752 724V862H318V724Z" fill="#5A5B60"/>
+  <path d="M848 724C848 695.281 871.281 672 900 672H1230C1258.72 672 1282 695.281 1282 724V862H848V724Z" fill="#54555A"/>
+
+  <path d="M468 816C468 789.49 489.49 768 516 768H674C700.51 768 722 789.49 722 816V930H468V816Z" fill="#BFC0C3"/>
+  <path d="M686 804C686 777.49 707.49 756 734 756H870C896.51 756 918 777.49 918 804V920H686V804Z" fill="#F1F1F0"/>
+  <path d="M950 816C950 789.49 971.49 768 998 768H1144C1170.51 768 1192 789.49 1192 816V930H950V816Z" fill="#494A4F"/>
+
+  <path d="M534 868C574 838 652 838 705 868C760 899 790 965 790 1000H442C442 955 474 913 534 868Z" fill="#ECECEC"/>
+  <path d="M534 868C574 838 652 838 705 868C760 899 790 965 790 1000" stroke="#D8D8D8" stroke-width="4" stroke-linecap="round"/>
+
+  <rect x="0" y="986" width="1600" height="14" fill="#050506"/>
+</svg>

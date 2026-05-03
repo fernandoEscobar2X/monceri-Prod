@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: monceri-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: monceri
+      POSTGRES_USER: monceri
+      POSTGRES_PASSWORD: monceri_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - monceri_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  monceri_postgres_data:
