@@ -7,8 +7,8 @@ import rateLimit from "@fastify/rate-limit";
 import Fastify from "fastify";
 import { ZodError } from "zod";
 import { env, readJwtKeys } from "./config/env";
+import { closeDatabaseConnection } from "./lib/database";
 import { AppError } from "./lib/errors";
-import { prisma } from "./lib/prisma";
 import { registerAuthRoutes } from "./modules/auth/auth.routes";
 import { registerCategoryRoutes } from "./modules/categories/categories.routes";
 import { registerCouponRoutes } from "./modules/coupons/coupons.routes";
@@ -103,7 +103,7 @@ export async function buildServer() {
   await app.register(registerUploadRoutes, { prefix: "/api/admin" });
 
   app.addHook("onClose", async () => {
-    await prisma.$disconnect();
+    await closeDatabaseConnection();
   });
 
   return app;

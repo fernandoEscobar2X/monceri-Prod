@@ -1,5 +1,10 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { CouponUpsertSchema, CouponValidateSchema } from "@monceri/shared";
+import {
+  CouponIdParamsSchema,
+  CouponUpdateSchema,
+  CouponUpsertSchema,
+  CouponValidateSchema,
+} from "./coupons.schemas";
 import { couponsService } from "./coupons.service";
 
 export async function validateCoupon(request: FastifyRequest, reply: FastifyReply) {
@@ -17,7 +22,7 @@ export async function createCoupon(request: FastifyRequest, reply: FastifyReply)
 }
 
 export async function updateCoupon(request: FastifyRequest, reply: FastifyReply) {
-  const params = request.params as { id: string };
-  const input = CouponUpsertSchema.partial().parse(request.body);
+  const params = CouponIdParamsSchema.parse(request.params);
+  const input = CouponUpdateSchema.parse(request.body);
   return reply.send(await couponsService.update(params.id, input));
 }

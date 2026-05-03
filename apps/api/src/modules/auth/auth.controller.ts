@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { AdminLoginSchema } from "@monceri/shared";
+import { AdminLoginSchema } from "./auth.schemas";
 import { authService } from "./auth.service";
 
 const cookieOptions = {

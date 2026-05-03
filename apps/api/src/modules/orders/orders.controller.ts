@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { CreateOrderInputSchema, OrderStatusUpdateSchema } from "@monceri/shared";
 import { currentAdminId } from "../../plugins/auth";
+import { CreateOrderInputSchema, OrderNumberParamsSchema, OrderStatusUpdateSchema } from "./orders.schemas";
 import { ordersService } from "./orders.service";
 
 export async function createOrder(request: FastifyRequest, reply: FastifyReply) {
@@ -15,7 +15,7 @@ export async function createOrder(request: FastifyRequest, reply: FastifyReply) 
 }
 
 export async function markWhatsappSent(request: FastifyRequest, reply: FastifyReply) {
-  const params = request.params as { orderNumber: string };
+  const params = OrderNumberParamsSchema.parse(request.params);
   return reply.send(await ordersService.markWhatsappSent(params.orderNumber));
 }
 
@@ -24,7 +24,7 @@ export async function listAdminOrders(_request: FastifyRequest, reply: FastifyRe
 }
 
 export async function updateOrderStatus(request: FastifyRequest, reply: FastifyReply) {
-  const params = request.params as { orderNumber: string };
+  const params = OrderNumberParamsSchema.parse(request.params);
   const input = OrderStatusUpdateSchema.parse(request.body);
   return reply.send(await ordersService.updateStatus(params.orderNumber, input, currentAdminId(request)));
 }

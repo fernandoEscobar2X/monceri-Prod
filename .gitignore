@@ -12,8 +12,10 @@ coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
-uploads/
-!.gitkeep
+/uploads/
+!/uploads/.gitkeep
+apps/api/uploads/
+!apps/api/uploads/.gitkeep
 apps/api/secrets/*.pem
 .DS_Store
 Thumbs.db

@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { StockAdjustmentSchema } from "@monceri/shared";
 import { currentAdminId } from "../../plugins/auth";
+import { StockAdjustmentSchema } from "./inventory.schemas";
 import { inventoryService } from "./inventory.service";
 
 export async function listStock(_request: FastifyRequest, reply: FastifyReply) {
