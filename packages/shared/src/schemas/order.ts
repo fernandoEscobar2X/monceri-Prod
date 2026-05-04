@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { idSchema, moneySchema } from "../primitives";
+import { ConfiguratorInputSchema } from "./configurator";
 
 export const OrderStatusSchema = z.enum([
   "PENDING",
@@ -14,11 +15,25 @@ export type OrderStatus = z.infer<typeof OrderStatusSchema>;
 export const CartVariantSelectionSchema = z.record(z.string().min(1), z.string().min(1));
 export type CartVariantSelection = z.infer<typeof CartVariantSelectionSchema>;
 
-export const CreateOrderItemSchema = z.object({
+export const CreateProductOrderItemSchema = z.object({
+  type: z.literal("PRODUCT"),
   productId: idSchema,
   quantity: z.number().int().min(1).max(50),
   variants: CartVariantSelectionSchema.default({}),
 });
+export type CreateProductOrderItemInput = z.infer<typeof CreateProductOrderItemSchema>;
+
+export const CreateConfiguratorOrderItemSchema = z.object({
+  type: z.literal("CONFIGURATOR"),
+  quantity: z.number().int().min(1).max(50),
+  configuration: ConfiguratorInputSchema,
+});
+export type CreateConfiguratorOrderItemInput = z.infer<typeof CreateConfiguratorOrderItemSchema>;
+
+export const CreateOrderItemSchema = z.discriminatedUnion("type", [
+  CreateProductOrderItemSchema,
+  CreateConfiguratorOrderItemSchema,
+]);
 export type CreateOrderItemInput = z.infer<typeof CreateOrderItemSchema>;
 
 export const CreateOrderInputSchema = z.object({
@@ -29,6 +44,14 @@ export const CreateOrderInputSchema = z.object({
   items: z.array(CreateOrderItemSchema).min(1),
 });
 export type CreateOrderInput = z.infer<typeof CreateOrderInputSchema>;
+
+export const CheckoutCustomerSchema = CreateOrderInputSchema.pick({
+  couponCode: true,
+  customerEmail: true,
+  customerName: true,
+  customerPhone: true,
+});
+export type CheckoutCustomerInput = z.infer<typeof CheckoutCustomerSchema>;
 
 export const OrderItemSchema = z.object({
   id: idSchema,

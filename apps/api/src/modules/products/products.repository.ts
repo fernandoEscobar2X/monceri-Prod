@@ -52,6 +52,13 @@ export const productsRepository = {
     });
   },
 
+  findBySlug(slug: string) {
+    return prisma.product.findUnique({
+      include: includeProductRelations,
+      where: { slug },
+    });
+  },
+
   findById(id: string) {
     return prisma.product.findUnique({
       include: includeProductRelations,

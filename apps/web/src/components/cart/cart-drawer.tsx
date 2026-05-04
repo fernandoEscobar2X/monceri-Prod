@@ -2,27 +2,19 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingBag, X } from "lucide-react";
+import { CheckoutForm } from "./checkout-form";
 import { CartItemCard } from "./cart-item";
-import { CartSummary } from "./cart-summary";
-import type { CartItem } from "./cart-types";
-
-export type { CartItem } from "./cart-types";
+import { useCartStore } from "@/stores/cart";
 
 type CartDrawerProps = {
-  items: CartItem[];
   open: boolean;
   onClose: () => void;
-  onIncrement: (id: string) => void;
-  onDecrement: (id: string) => void;
 };
 
-export function CartDrawer({
-  items,
-  open,
-  onClose,
-  onIncrement,
-  onDecrement,
-}: CartDrawerProps) {
+export function CartDrawer({ open, onClose }: CartDrawerProps) {
+  const items = useCartStore((state) => state.items);
+  const incrementItem = useCartStore((state) => state.incrementItem);
+  const decrementItem = useCartStore((state) => state.decrementItem);
   const subtotal = items.reduce((acc, item) => acc + item.price * item.qty, 0);
   const shipping = subtotal >= 1500 || subtotal === 0 ? 0 : 180;
   const total = subtotal + shipping;
@@ -84,14 +76,19 @@ export function CartDrawer({
                   <CartItemCard
                     key={item.id}
                     item={item}
-                    onDecrement={onDecrement}
-                    onIncrement={onIncrement}
+                    onDecrement={decrementItem}
+                    onIncrement={incrementItem}
                   />
                 ))
               )}
             </div>
 
-            <CartSummary shipping={shipping} subtotal={subtotal} total={total} />
+            <CheckoutForm
+              onClose={onClose}
+              shipping={shipping}
+              subtotal={subtotal}
+              total={total}
+            />
           </motion.aside>
         </>
       ) : null}

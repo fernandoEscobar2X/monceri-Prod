@@ -8,42 +8,48 @@ type CartItemCardProps = {
 };
 
 export function CartItemCard({ item, onDecrement, onIncrement }: CartItemCardProps) {
+  const isConfiguratorItem = item.type === "CONFIGURATOR";
+
   return (
     <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="mb-4 rounded-[24px] bg-gradient-to-br from-[#111827] via-[#1f2937] to-[#0b0f19] p-5">
         <div className="text-xs font-semibold uppercase tracking-[0.28em] text-white/50">
-          Letrero personalizado
+          {isConfiguratorItem ? "Letrero personalizado" : "Producto Monceri"}
         </div>
         <div className="mt-4 whitespace-pre-line text-3xl font-semibold text-white [text-shadow:0_0_18px_rgba(230,57,70,0.9)]">
-          {item.phrase}
+          {isConfiguratorItem ? item.phrase : item.name}
         </div>
       </div>
 
       <div className="space-y-2 text-sm text-gray-500">
-        <p>
-          <span className="font-semibold text-[#111827]">Fuente:</span>{" "}
-          {item.fontName}
-        </p>
-        <p>
-          <span className="font-semibold text-[#111827]">Tamano:</span>{" "}
-          {item.sizeLabel}
-        </p>
-        <p>
-          <span className="font-semibold text-[#111827]">Color:</span>{" "}
-          {item.colorLabel}
-        </p>
-        {item.lineCount > 1 ? (
+        {isConfiguratorItem ? (
+          <>
+            <p>
+              <span className="font-semibold text-[#111827]">Fuente:</span> {item.fontName}
+            </p>
+            <p>
+              <span className="font-semibold text-[#111827]">Tamano:</span> {item.sizeLabel}
+            </p>
+            <p>
+              <span className="font-semibold text-[#111827]">Color:</span> {item.colorLabel}
+            </p>
+            {item.lineCount > 1 ? (
+              <p>
+                <span className="font-semibold text-[#111827]">Renglones:</span> {item.lineCount}
+              </p>
+            ) : null}
+            {item.addOns.length > 0 ? (
+              <p>
+                <span className="font-semibold text-[#111827]">Extras:</span> {item.addOns.join(", ")}
+              </p>
+            ) : null}
+          </>
+        ) : (
           <p>
-            <span className="font-semibold text-[#111827]">Renglones:</span>{" "}
-            {item.lineCount}
+            <span className="font-semibold text-[#111827]">Variantes:</span>{" "}
+            {item.variantLabel || "Sin variantes"}
           </p>
-        ) : null}
-        {item.addOns.length > 0 ? (
-          <p>
-            <span className="font-semibold text-[#111827]">Extras:</span>{" "}
-            {item.addOns.join(", ")}
-          </p>
-        ) : null}
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">

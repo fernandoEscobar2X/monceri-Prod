@@ -11,6 +11,24 @@ export class ApiRequestError extends Error {
   }
 }
 
+type ErrorResponseBody = {
+  message?: unknown;
+};
+
+export function getApiErrorMessage(error: ApiRequestError) {
+  const body = error.responseBody;
+
+  if (body && typeof body === "object" && "message" in body) {
+    const message = (body as ErrorResponseBody).message;
+
+    if (typeof message === "string" && message.length > 0) {
+      return message;
+    }
+  }
+
+  return `La API respondio con estado ${error.status}. Intenta de nuevo.`;
+}
+
 async function readResponseBody(response: Response): Promise<unknown> {
   const text = await response.text();
 

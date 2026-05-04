@@ -6,3 +6,4 @@ export * from "./schemas/coupon";
 export * from "./schemas/inventory";
 export * from "./schemas/order";
 export * from "./schemas/product";
+export * from "./pricing/configurator-pricing";

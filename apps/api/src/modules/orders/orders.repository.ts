@@ -106,6 +106,19 @@ export const ordersRepository = {
         });
       }
 
+      if (order.couponId) {
+        await tx.coupon.update({
+          data: {
+            usedCount: {
+              increment: 1,
+            },
+          },
+          where: {
+            id: order.couponId,
+          },
+        });
+      }
+
       return tx.order.update({
         data: {
           notes: input.notes,

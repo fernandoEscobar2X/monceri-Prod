@@ -31,6 +31,16 @@ export const productsService = {
     return product;
   },
 
+  async findActiveBySlugForOrder(slug: string) {
+    const product = await productsRepository.findBySlug(slug);
+
+    if (!product || !product.active) {
+      throw new NotFoundError("Producto activo");
+    }
+
+    return product;
+  },
+
   create(input: ProductUpsertInput) {
     return productsRepository.create(input);
   },

@@ -13,7 +13,7 @@ import type {
   SizeOption,
 } from "./configurator-types";
 
-type ConfiguratorProps = {
+export type ConfiguratorProps = {
   activeColorId: string;
   activeWordLabel: string;
   addOnCount: number;

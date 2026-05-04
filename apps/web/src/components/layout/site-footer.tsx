@@ -99,7 +99,7 @@ export function SiteFooter({ categories, paymentMethods }: SiteFooterProps) {
 
         <div className="flex flex-col gap-3 pt-6 text-sm text-white/72 lg:flex-row lg:items-center lg:justify-between">
           <p>VisibleMX x Monceri. Prototipo storefront v1.</p>
-          <p>Checkout preparado para Mercado Pago, SPEI, tarjeta y OXXO.</p>
+          <p>Pedido preparado para WhatsApp, fabricacion y seguimiento manual.</p>
         </div>
       </div>
     </footer>
