@@ -1,12 +1,13 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { env } from "../../config/env";
 import { AdminLoginSchema } from "./auth.schemas";
 import { authService } from "./auth.service";
 
 const cookieOptions = {
   httpOnly: true,
   path: "/",
-  sameSite: "strict" as const,
-  secure: process.env.NODE_ENV === "production",
+  sameSite: env.NODE_ENV === "production" ? ("strict" as const) : ("lax" as const),
+  secure: env.NODE_ENV === "production",
 };
 
 export async function loginAdmin(request: FastifyRequest, reply: FastifyReply) {

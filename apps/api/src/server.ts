@@ -33,17 +33,7 @@ export async function buildServer() {
   await app.register(helmet);
   await app.register(cors, {
     credentials: true,
-    origin:
-      env.NODE_ENV === "development"
-        ? [
-            env.WEB_FRONTEND_URL,
-            env.ADMIN_FRONTEND_URL,
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-          ]
-        : [env.WEB_FRONTEND_URL, env.ADMIN_FRONTEND_URL],
+    origin: [env.ADMIN_FRONTEND_URL, env.WEB_FRONTEND_URL],
   });
   await app.register(cookie, {
     secret: env.COOKIE_SECRET,
@@ -123,7 +113,7 @@ export async function buildServer() {
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const app = await buildServer();
   await app.listen({
-    host: "127.0.0.1",
+    host: "0.0.0.0",
     port: env.PORT,
   });
 }
