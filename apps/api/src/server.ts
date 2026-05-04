@@ -4,7 +4,10 @@ import helmet from "@fastify/helmet";
 import jwt from "@fastify/jwt";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
+import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { ZodError } from "zod";
 import { env, readJwtKeys } from "./config/env";
 import { closeDatabaseConnection } from "./lib/database";
@@ -12,6 +15,7 @@ import { AppError } from "./lib/errors";
 import { registerAuthRoutes } from "./modules/auth/auth.routes";
 import { registerCategoryRoutes } from "./modules/categories/categories.routes";
 import { registerCouponRoutes } from "./modules/coupons/coupons.routes";
+import { registerDashboardRoutes } from "./modules/dashboard/dashboard.routes";
 import { registerInventoryRoutes } from "./modules/inventory/inventory.routes";
 import { registerOrderRoutes } from "./modules/orders/orders.routes";
 import { registerProductRoutes } from "./modules/products/products.routes";
@@ -64,9 +68,15 @@ export async function buildServer() {
   });
   await app.register(multipart, {
     limits: {
-      fileSize: 5 * 1024 * 1024,
+      fileSize: env.MAX_UPLOAD_SIZE_BYTES,
       files: 1,
     },
+  });
+  await app.register(fastifyStatic, {
+    root: resolve(process.cwd(), env.UPLOADS_DIR),
+    prefix: env.UPLOADS_URL_PREFIX.endsWith("/")
+      ? env.UPLOADS_URL_PREFIX
+      : `${env.UPLOADS_URL_PREFIX}/`,
   });
 
   app.setErrorHandler((error, _request, reply) => {
@@ -100,6 +110,7 @@ export async function buildServer() {
   await app.register(registerOrderRoutes, { prefix: "/api" });
   await app.register(registerAuthRoutes, { prefix: "/api/admin/auth" });
   await app.register(registerInventoryRoutes, { prefix: "/api/admin" });
+  await app.register(registerDashboardRoutes, { prefix: "/api/admin" });
   await app.register(registerUploadRoutes, { prefix: "/api/admin" });
 
   app.addHook("onClose", async () => {
@@ -109,7 +120,7 @@ export async function buildServer() {
   return app;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
   const app = await buildServer();
   await app.listen({
     host: "127.0.0.1",

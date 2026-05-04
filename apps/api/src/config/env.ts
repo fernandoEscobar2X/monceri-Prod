@@ -15,6 +15,9 @@ const envSchema = z.object({
   WEB_FRONTEND_URL: z.string().url(),
   SENTRY_DSN: z.string().optional().default(""),
   LOG_LEVEL: z.string().default("info"),
+  UPLOADS_DIR: z.string().min(1).default("./uploads"),
+  UPLOADS_URL_PREFIX: z.string().min(1).default("/uploads"),
+  MAX_UPLOAD_SIZE_BYTES: z.coerce.number().int().positive().default(5 * 1024 * 1024),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

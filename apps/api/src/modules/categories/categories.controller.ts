@@ -10,6 +10,11 @@ export async function listAdminCategories(_request: FastifyRequest, reply: Fasti
   return reply.send(await categoriesService.listAdmin());
 }
 
+export async function getAdminCategory(request: FastifyRequest, reply: FastifyReply) {
+  const params = CategoryIdParamsSchema.parse(request.params);
+  return reply.send(await categoriesService.findById(params.id));
+}
+
 export async function createCategory(request: FastifyRequest, reply: FastifyReply) {
   const input = CategoryUpsertSchema.parse(request.body);
   return reply.status(201).send(await categoriesService.create(input));

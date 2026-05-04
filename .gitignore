@@ -4,6 +4,7 @@ dist/
 build/
 out/
 .turbo/
+.logs/
 .env
 .env.*
 !.env.example
@@ -12,9 +13,9 @@ coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
-/uploads/
+/uploads/*
 !/uploads/.gitkeep
-apps/api/uploads/
+apps/api/uploads/*
 !apps/api/uploads/.gitkeep
 apps/api/secrets/*.pem
 .DS_Store

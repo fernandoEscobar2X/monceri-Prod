@@ -3,6 +3,7 @@ export * from "./schemas/auth";
 export * from "./schemas/category";
 export * from "./schemas/configurator";
 export * from "./schemas/coupon";
+export * from "./schemas/dashboard";
 export * from "./schemas/inventory";
 export * from "./schemas/order";
 export * from "./schemas/product";

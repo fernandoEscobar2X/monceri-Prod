@@ -43,6 +43,13 @@ export function SiteHeader({
           </div>
 
           <nav className="hidden items-center gap-8 text-sm font-semibold text-gray-600 lg:flex">
+            <button
+              type="button"
+              onClick={() => onScrollToSection("configurador")}
+              className="transition hover:text-[#111827]"
+            >
+              Configurador
+            </button>
             {categories.map((category) => (
               <a key={category} href="#catalogo" className="transition hover:text-[#111827]">
                 {category}

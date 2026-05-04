@@ -23,6 +23,11 @@ export async function listAdminOrders(_request: FastifyRequest, reply: FastifyRe
   return reply.send(await ordersService.listAdmin());
 }
 
+export async function getAdminOrder(request: FastifyRequest, reply: FastifyReply) {
+  const params = OrderNumberParamsSchema.parse(request.params);
+  return reply.send(await ordersService.findByOrderNumber(params.orderNumber));
+}
+
 export async function updateOrderStatus(request: FastifyRequest, reply: FastifyReply) {
   const params = OrderNumberParamsSchema.parse(request.params);
   const input = OrderStatusUpdateSchema.parse(request.body);

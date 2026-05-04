@@ -11,6 +11,16 @@ export const categoriesService = {
     return categoriesRepository.listAdmin();
   },
 
+  async findById(id: string) {
+    const category = await categoriesRepository.findById(id);
+
+    if (!category) {
+      throw new NotFoundError("Categoria");
+    }
+
+    return category;
+  },
+
   async create(input: CategoryUpsertInput) {
     return categoriesRepository.create(input);
   },

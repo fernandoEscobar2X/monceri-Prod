@@ -105,6 +105,16 @@ export const ordersService = {
     return ordersRepository.listAdmin();
   },
 
+  async findByOrderNumber(orderNumber: string) {
+    const order = await ordersRepository.findByOrderNumber(orderNumber);
+
+    if (!order) {
+      throw new NotFoundError("Orden");
+    }
+
+    return order;
+  },
+
   async create(input: CreateOrderInput) {
     const pricedItems: PricedOrderItem[] = [];
 

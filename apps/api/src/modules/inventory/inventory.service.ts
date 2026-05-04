@@ -6,6 +6,10 @@ export const inventoryService = {
     return inventoryRepository.listStock();
   },
 
+  listMovements(productId?: string) {
+    return inventoryRepository.listMovements(productId);
+  },
+
   adjust(input: StockAdjustmentInput, adminId: string) {
     return inventoryRepository.adjust(input, adminId);
   },

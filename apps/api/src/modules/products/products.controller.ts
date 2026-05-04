@@ -23,6 +23,11 @@ export async function listAdminProducts(request: FastifyRequest, reply: FastifyR
   return reply.send(await productsService.listAdmin(query));
 }
 
+export async function getAdminProduct(request: FastifyRequest, reply: FastifyReply) {
+  const params = ProductIdParamsSchema.parse(request.params);
+  return reply.send(await productsService.findAdminById(params.id));
+}
+
 export async function createProduct(request: FastifyRequest, reply: FastifyReply) {
   const input = ProductUpsertSchema.parse(request.body);
   return reply.status(201).send(await productsService.create(input));

@@ -7,6 +7,7 @@ export type StockMovementType = z.infer<typeof StockMovementTypeSchema>;
 export const StockAdjustmentSchema = z.object({
   productId: idSchema,
   variantId: z.string().optional(),
+  type: StockMovementTypeSchema.default("ADJUSTMENT"),
   quantity: z.number().int(),
   reason: z.string().min(3),
 });

@@ -17,17 +17,22 @@ import {
   anatomyDetailStyle,
   announcementItems,
   categories,
+  type ProductCard,
   heroInstallationStyle,
   marqueeImages,
   paymentMethods,
   promoBannerStyle,
   reviewCards,
-  suggestedProducts,
+  suggestedProducts as fallbackSuggestedProducts,
 } from "@/lib/data/storefront-data";
 import { formatPrice } from "@/lib/formatters/price";
 import { useCartStore } from "@/stores/cart";
 
-export function MonceriHomePrototype() {
+type MonceriHomePrototypeProps = {
+  featuredProducts?: ProductCard[];
+};
+
+export function MonceriHomePrototype({ featuredProducts = fallbackSuggestedProducts }: MonceriHomePrototypeProps) {
   const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -94,11 +99,6 @@ export function MonceriHomePrototype() {
     setCartOpen(true);
   }
 
-  function handleProductDetail(productName: string) {
-    configurator.setSuggestedPhrase(productName);
-    scrollToSection("configurador");
-  }
-
   return (
     <main className="min-h-screen bg-[#FAFAFA] text-[#111827]">
       <div className="sticky top-0 z-50">
@@ -121,8 +121,7 @@ export function MonceriHomePrototype() {
       <GallerySection isMobileLayout={isMobileLayout} marqueeCards={marqueeCards} />
       <ProductLinesSection
         formatPrice={formatPrice}
-        onProductDetail={handleProductDetail}
-        products={suggestedProducts}
+        products={featuredProducts.length > 0 ? featuredProducts : fallbackSuggestedProducts}
       />
       <TestimonialsSection reviews={reviewCards} />
       <SiteFooter categories={categories} paymentMethods={paymentMethods} />

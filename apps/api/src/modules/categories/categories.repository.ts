@@ -28,6 +28,9 @@ export const categoriesRepository = {
   },
 
   delete(id: string) {
-    return prisma.category.delete({ where: { id } });
+    return prisma.category.update({
+      data: { active: false },
+      where: { id },
+    });
   },
 };

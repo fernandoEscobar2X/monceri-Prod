@@ -16,6 +16,20 @@ export const inventoryRepository = {
     });
   },
 
+  listMovements(productId?: string) {
+    return prisma.stockMovement.findMany({
+      include: {
+        product: { select: { id: true, name: true } },
+        variant: { select: { id: true, name: true, value: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+      where: {
+        productId,
+      },
+    });
+  },
+
   adjust(input: StockAdjustmentInput, adminId: string) {
     return prisma.$transaction(async (tx) => {
       if (input.variantId) {
@@ -44,7 +58,7 @@ export const inventoryRepository = {
           productId: input.productId,
           quantity: input.quantity,
           reason: input.reason,
-          type: "ADJUSTMENT",
+          type: input.type,
           variantId: input.variantId,
         },
       });

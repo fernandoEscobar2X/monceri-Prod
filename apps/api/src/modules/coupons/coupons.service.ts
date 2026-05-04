@@ -41,6 +41,16 @@ export const couponsService = {
     return couponsRepository.listAdmin();
   },
 
+  async findById(id: string) {
+    const coupon = await couponsRepository.findById(id);
+
+    if (!coupon) {
+      throw new NotFoundError("Cupon");
+    }
+
+    return coupon;
+  },
+
   async validate(code: string, subtotal: number) {
     const coupon = await couponsRepository.findByCode(code);
     return calculateDiscount({ coupon, subtotal });
@@ -58,6 +68,16 @@ export const couponsService = {
     }
 
     return couponsRepository.update(id, input);
+  },
+
+  async delete(id: string) {
+    const coupon = await couponsRepository.findById(id);
+
+    if (!coupon) {
+      throw new NotFoundError("Cupon");
+    }
+
+    return couponsRepository.delete(id);
   },
 
   async ensureValid(code: string, subtotal: number) {

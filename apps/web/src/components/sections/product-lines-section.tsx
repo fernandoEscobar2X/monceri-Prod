@@ -1,19 +1,20 @@
+import Link from "next/link";
+
 type ProductLineCard = {
   category: string;
   image: string;
   name: string;
   price: number;
+  slug: string;
 };
 
 type ProductLinesSectionProps = {
   formatPrice: (value: number) => string;
-  onProductDetail: (productName: string) => void;
   products: ProductLineCard[];
 };
 
 export function ProductLinesSection({
   formatPrice,
-  onProductDetail,
   products,
 }: ProductLinesSectionProps) {
   return (
@@ -28,9 +29,9 @@ export function ProductLinesSection({
               Productos predisenados con vibes de showroom.
             </h2>
           </div>
-          <a href="#configurador" className="text-sm font-bold uppercase tracking-[0.2em] text-[#111827]">
-            Ir al configurador
-          </a>
+          <Link href="/catalogo" className="text-sm font-bold uppercase tracking-[0.2em] text-[#111827]">
+            Ver catalogo completo
+          </Link>
         </div>
 
         <p className="mt-4 text-sm text-gray-500 sm:hidden">Desliza para ver mas productos.</p>
@@ -57,13 +58,12 @@ export function ProductLinesSection({
                 </h3>
                 <div className="mt-6 flex items-center justify-between gap-3">
                   <span className="text-lg font-bold text-[#111827]">{formatPrice(product.price)}</span>
-                  <button
-                    type="button"
-                    onClick={() => onProductDetail(product.name)}
+                  <Link
+                    href={`/producto/${product.slug}`}
                     className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
                   >
                     Ver detalle
-                  </button>
+                  </Link>
                 </div>
               </div>
             </article>

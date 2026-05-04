@@ -6,6 +6,7 @@ export type ProductCard = {
   category: string;
   price: number;
   image: string;
+  slug: string;
 };
 
 export type ReviewCard = {
@@ -63,6 +64,7 @@ export const suggestedProducts: ProductCard[] = [
     name: "The Sarmiento's",
     category: "Neon para eventos",
     price: 6450,
+    slug: "the-sarmientos",
     image:
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
   },
@@ -70,6 +72,7 @@ export const suggestedProducts: ProductCard[] = [
     name: "Coffee Corner",
     category: "Negocio / cafeteria",
     price: 4890,
+    slug: "coffee-corner",
     image:
       "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1200&auto=format&fit=crop",
   },
@@ -77,6 +80,7 @@ export const suggestedProducts: ProductCard[] = [
     name: "Mon Amour",
     category: "Decoracion interior",
     price: 5320,
+    slug: "mon-amour",
     image:
       "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop",
   },
@@ -84,6 +88,7 @@ export const suggestedProducts: ProductCard[] = [
     name: "Open Late",
     category: "Bar / restaurante",
     price: 5980,
+    slug: "open-late",
     image:
       "https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?q=80&w=1200&auto=format&fit=crop",
   },
