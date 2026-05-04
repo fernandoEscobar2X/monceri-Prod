@@ -66,27 +66,35 @@ export function CheckoutForm({ shipping, subtotal, total, onClose }: CheckoutFor
       }),
     };
 
+    let order: WhatsappOrderResponse;
+
     try {
-      const order = await apiRequest<WhatsappOrderResponse>("/api/orders", {
+      order = await apiRequest<WhatsappOrderResponse>("/api/orders", {
         body: JSON.stringify(payload),
         method: "POST",
       });
+    } catch (error) {
+      setSubmitError(error instanceof ApiRequestError ? getApiErrorMessage(error) : "No se pudo crear el pedido.");
+      return;
+    }
 
+    try {
       window.open(
         buildWhatsAppHref(order.whatsappMessage, process.env.NEXT_PUBLIC_WHATSAPP_NUMBER),
         "_blank",
         "noopener,noreferrer",
       );
-
-      await apiRequest<unknown>(`/api/orders/${order.orderNumber}/mark-sent`, {
-        method: "POST",
-      });
-
       clearCart();
       onClose();
     } catch (error) {
-      setSubmitError(error instanceof ApiRequestError ? getApiErrorMessage(error) : "No se pudo crear el pedido.");
+      console.warn("No se pudo abrir WhatsApp automaticamente.", error);
     }
+
+    void apiRequest<unknown>(`/api/orders/${order.orderNumber}/mark-sent`, {
+      method: "POST",
+    }).catch((error: unknown) => {
+      console.warn("No se pudo marcar la orden como enviada por WhatsApp.", error);
+    });
   }
 
   return (

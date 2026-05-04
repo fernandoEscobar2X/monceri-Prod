@@ -19,11 +19,6 @@ type PricedOrderItem = {
   variantData: Record<string, string>;
 };
 
-function nextOrderNumber() {
-  const timestamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
-  return `MNC-${timestamp}`;
-}
-
 function formatCurrency(value: number) {
   return value.toLocaleString("es-MX", {
     currency: "MXN",
@@ -154,8 +149,14 @@ export const ordersService = {
         throw new ConflictError(`Stock insuficiente para ${product.name}`);
       }
 
+      const selectedVariantPairs = Object.entries(item.variants);
       const variantAdjust = product.variants
-        .filter((variant) => variant.active && Object.values(item.variants).includes(variant.value))
+        .filter((variant) =>
+          variant.active &&
+          selectedVariantPairs.some(
+            ([name, value]) => variant.name === name && variant.value === value,
+          ),
+        )
         .reduce((sum, variant) => sum + Number(variant.priceAdjust), 0);
       const unitPrice = Number(product.basePrice) + variantAdjust;
 
@@ -174,16 +175,15 @@ export const ordersService = {
     const couponResult = couponCode ? await couponsService.ensureValid(couponCode, subtotal) : null;
     const discount = couponResult?.discount ?? 0;
     const total = subtotal - discount;
-    const orderNumber = nextOrderNumber();
     const order = await ordersRepository.createPending({
       couponId: couponResult?.coupon.id,
       discount,
       input,
       items: pricedItems,
-      orderNumber,
       subtotal,
       total,
     });
+    const orderNumber = order.orderNumber;
 
     return {
       order,

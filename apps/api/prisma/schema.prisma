@@ -111,6 +111,12 @@ model Order {
   @@index([createdAt])
 }
 
+model OrderCounter {
+  year       Int      @id
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
