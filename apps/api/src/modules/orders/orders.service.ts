@@ -52,6 +52,12 @@ function validateConfigurator(configuration: ConfiguratorInput) {
     throw new ValidationError(`Esta medida admite hasta ${size.maxLines} renglones`);
   }
 
+  if (letterCount > size.maxLettersPerLine) {
+    throw new ValidationError(
+      `El texto excede el limite de letras del tamano seleccionado (${letterCount}/${size.maxLettersPerLine})`,
+    );
+  }
+
   if (firstOverflowLineIndex >= 0) {
     throw new ValidationError(
       `El renglon ${firstOverflowLineIndex + 1} supera el maximo para esta medida`,

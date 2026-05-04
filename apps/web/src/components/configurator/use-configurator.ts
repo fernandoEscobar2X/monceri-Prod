@@ -16,6 +16,7 @@ import { formatPrice } from "@/lib/formatters/price";
 import { useCartStore } from "@/stores/cart";
 
 const minimumCharacters = 3;
+const defaultSizeOption = sizeOptions.find((size) => size.id === "65cm") ?? sizeOptions[0];
 
 function sanitizePhraseInput(value: string) {
   return value.replace(/\r/g, "").split("\n").slice(0, 3).join("\n");
@@ -55,7 +56,7 @@ export function useConfigurator({
   const previewY = useMotionValue(0);
   const [phrase, setPhrase] = useState("Monceri");
   const [selectedFont, setSelectedFont] = useState(fontOptions[0]);
-  const [selectedSize, setSelectedSize] = useState(sizeOptions[0]);
+  const [selectedSize, setSelectedSize] = useState(defaultSizeOption);
   const [selectedEnvironmentId, setSelectedEnvironmentId] = useState(environmentOptions[0].id);
   const [previewScale, setPreviewScale] = useState(1);
   const [wordColorIds, setWordColorIds] = useState<string[]>(["red"]);
@@ -63,8 +64,7 @@ export function useConfigurator({
   const [dimmerEnabled, setDimmerEnabled] = useState(false);
   const [waterproofEnabled, setWaterproofEnabled] = useState(false);
   const [nfcEnabled, setNfcEnabled] = useState(false);
-  const initialPrice =
-    selectedSize.basePrice + countConfiguratorLetters("Monceri") * selectedSize.perCharacterPrice;
+  const initialPrice = selectedSize.basePrice;
   const previousPriceRef = useRef(initialPrice);
   const hasAnimatedPriceRef = useRef(false);
   const [priceDelta, setPriceDelta] = useState(0);
@@ -82,12 +82,15 @@ export function useConfigurator({
   const hasLineLengthError = firstOverflowLineIndex >= 0;
   const hasLineCountError = currentLineCount > selectedSize.maxLines;
   const letterCount = countConfiguratorLetters(phraseLines.join(""));
+  const maxLetterCount = selectedSize.maxLettersPerLine;
+  const hasTotalLengthError = letterCount > maxLetterCount;
   const isBelowMinimumCharacters = letterCount > 0 && letterCount < minimumCharacters;
   const hasTypedText = phrase.trim().length > 0;
   const isConfigurationValid =
     currentLineCount > 0 &&
     letterCount >= minimumCharacters &&
     !hasLineCountError &&
+    !hasTotalLengthError &&
     !hasLineLengthError;
   const normalizedPhrase = phraseLines.join("\n") || "Tu frase";
   const previewWordMatrix =
@@ -132,21 +135,27 @@ export function useConfigurator({
     nfcEnabled ? "Tecnologia NFC" : null,
   ].filter((item): item is string => Boolean(item));
   const hasValidationError =
-    hasLineCountError || hasLineLengthError || isBelowMinimumCharacters || !hasTypedText;
+    hasLineCountError ||
+    hasTotalLengthError ||
+    hasLineLengthError ||
+    isBelowMinimumCharacters ||
+    !hasTypedText;
   const addToCartLabel = !hasTypedText || isBelowMinimumCharacters
     ? "Completa minimo 3 caracteres"
-    : hasLineCountError || hasLineLengthError
+    : hasLineCountError || hasTotalLengthError || hasLineLengthError
       ? "Corrige la configuracion para continuar"
       : `Agregar al carrito - ${formatPrice(price.total)}`;
   const priceBreakdown = [
     { label: `Base ${selectedSize.width}`, value: price.base },
-    { label: `Texto (${letterCount} letras)`, value: price.lettering },
+    { label: `Texto incluido (${letterCount} letras)`, value: price.lettering },
     { label: "Control remoto Dimmer", value: price.dimmer },
     { label: "Waterproof exterior", value: price.waterproof },
     { label: "Tecnologia NFC", value: price.nfc },
   ];
   const validationMessage = hasLineCountError
     ? `Esta medida admite hasta ${selectedSize.maxLines} renglones.`
+    : hasTotalLengthError
+      ? `El texto excede el limite de letras del tamano seleccionado (${letterCount}/${maxLetterCount}).`
     : hasLineLengthError
       ? `El renglon ${firstOverflowLineIndex + 1} supera el maximo de ${selectedSize.maxLettersPerLine} letras para esta medida.`
       : isBelowMinimumCharacters

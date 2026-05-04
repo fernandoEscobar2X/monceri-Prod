@@ -106,12 +106,12 @@ export function ConfiguratorControls({
                   Escribe tu texto
                 </label>
                 <p className="mt-2 text-sm text-gray-500">
-                  {currentLineCount}/3 Renglones, {selectedSize.maxLettersPerLine} Letras maximas por renglon
+                  {currentLineCount}/{selectedSize.maxLines} Renglones
                 </p>
               </div>
 
               <div className="rounded-full bg-[#111827] px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-white">
-                {letterCount} caracteres
+                {letterCount} / {selectedSize.maxLettersPerLine} letras
               </div>
             </div>
 
@@ -310,7 +310,7 @@ export function ConfiguratorControls({
                     </p>
                     <p className="mt-2 text-sm leading-6 text-gray-500">
                       Personaliza los efectos de luz, encendido y apagado, y la intensidad de
-                      luz. Disponible unicamente en letreros de 70 cm o menos.
+                      luz. Disponible unicamente en letreros de 65 cm o menos.
                     </p>
                   </div>
                   <span className="text-sm font-semibold text-[#E63946]">Ejemplo</span>
@@ -344,7 +344,7 @@ export function ConfiguratorControls({
 
                 {!dimmerAvailable ? (
                   <p className="mt-3 text-sm text-[#B42318]">
-                    Esta medida ya no permite dimmer. Cambia a 50cm o 70cm para activarlo.
+                    Esta medida ya no permite dimmer. Cambia a 45cm o 65cm para activarlo.
                   </p>
                 ) : null}
               </div>

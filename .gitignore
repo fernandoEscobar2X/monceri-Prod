@@ -17,6 +17,9 @@ test-results/
 !/uploads/.gitkeep
 apps/api/uploads/*
 !apps/api/uploads/.gitkeep
+!apps/api/uploads/products/
+apps/api/uploads/products/*
+!apps/api/uploads/products/.gitkeep
 apps/api/secrets/*.pem
 .DS_Store
 Thumbs.db

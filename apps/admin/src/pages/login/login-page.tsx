@@ -42,7 +42,7 @@ export function LoginPage() {
           Entra para gestionar productos, pedidos e inventario.
         </Typography.Paragraph>
         <Form<LoginValues>
-          initialValues={{ email: "admin@monceri.local", password: "" }}
+          initialValues={{ email: "", password: "" }}
           layout="vertical"
           onFinish={submit}
         >

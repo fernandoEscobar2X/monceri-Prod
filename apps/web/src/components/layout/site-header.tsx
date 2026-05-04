@@ -152,8 +152,17 @@ export function SiteHeader({
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#E63946]">
                     Atencion directa
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-[#111827]">hola@monceri.mx</p>
-                  <p className="mt-1 text-sm text-gray-500">Xalapa, Veracruz</p>
+                  <a
+                    href="https://wa.me/message/66WQ7VIAYOOZB1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 block text-sm font-semibold text-[#111827]"
+                  >
+                    WhatsApp: +52 228 411 31 48
+                  </a>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Avenida Miguel Aleman #13, Xalapa, Veracruz
+                  </p>
                 </div>
               </div>
             </motion.aside>

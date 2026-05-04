@@ -1,5 +1,5 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Space, Upload, message } from "antd";
+import { ArrowDownOutlined, ArrowUpOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Space, Tooltip, Upload, message } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import type { ProductImageInput, UploadImageResponse } from "@monceri/shared";
 import { API_URL } from "@/providers/api-client";
@@ -99,15 +99,22 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
       <Space wrap>
         {value.map((image, index) => (
           <Space key={image.url}>
-            <Button disabled={index === 0} onClick={() => update(swapImages(value, index, index - 1))}>
-              Subir
-            </Button>
-            <Button
-              disabled={index === value.length - 1}
-              onClick={() => update(swapImages(value, index, index + 1))}
-            >
-              Bajar
-            </Button>
+            <Tooltip title="Mover arriba">
+              <Button
+                aria-label="Mover arriba"
+                disabled={index === 0}
+                icon={<ArrowUpOutlined />}
+                onClick={() => update(swapImages(value, index, index - 1))}
+              />
+            </Tooltip>
+            <Tooltip title="Mover abajo">
+              <Button
+                aria-label="Mover abajo"
+                disabled={index === value.length - 1}
+                icon={<ArrowDownOutlined />}
+                onClick={() => update(swapImages(value, index, index + 1))}
+              />
+            </Tooltip>
           </Space>
         ))}
       </Space>

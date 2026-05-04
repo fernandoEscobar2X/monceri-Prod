@@ -90,40 +90,35 @@ const sizeVisualMetadata: Record<
   string,
   Pick<SizeOption, "previewMaxWidth" | "singleLineClassName" | "multiLineClassName">
 > = {
-  "50cm": {
+  "45cm": {
     previewMaxWidth: "320px",
     singleLineClassName: "text-[2.2rem] sm:text-4xl xl:text-5xl",
     multiLineClassName: "text-[1.8rem] sm:text-3xl xl:text-4xl",
   },
-  "70cm": {
+  "65cm": {
     previewMaxWidth: "360px",
     singleLineClassName: "text-[2.45rem] sm:text-5xl xl:text-6xl",
     multiLineClassName: "text-[1.95rem] sm:text-4xl xl:text-5xl",
   },
-  "90cm": {
+  "85cm": {
     previewMaxWidth: "420px",
     singleLineClassName: "text-[2.65rem] sm:text-5xl xl:text-6xl",
     multiLineClassName: "text-[2.05rem] sm:text-4xl xl:text-5xl",
   },
-  "100cm": {
+  "105cm": {
     previewMaxWidth: "450px",
     singleLineClassName: "text-[2.8rem] sm:text-5xl xl:text-6xl",
     multiLineClassName: "text-[2.15rem] sm:text-4xl xl:text-5xl",
   },
-  "120cm": {
+  "125cm": {
     previewMaxWidth: "510px",
     singleLineClassName: "text-[3rem] sm:text-6xl xl:text-7xl",
     multiLineClassName: "text-[2.35rem] sm:text-5xl xl:text-6xl",
   },
-  "150cm": {
+  "155cm": {
     previewMaxWidth: "580px",
     singleLineClassName: "text-[3.1rem] sm:text-6xl xl:text-7xl",
     multiLineClassName: "text-[2.5rem] sm:text-5xl xl:text-6xl",
-  },
-  "200cm": {
-    previewMaxWidth: "660px",
-    singleLineClassName: "text-[3.3rem] sm:text-7xl xl:text-[5.5rem]",
-    multiLineClassName: "text-[2.7rem] sm:text-6xl xl:text-7xl",
   },
 };
 

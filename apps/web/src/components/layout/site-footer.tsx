@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { MessageCircle } from "lucide-react";
+import type { SVGProps } from "react";
+import { MessageCircle, Music2 } from "lucide-react";
 
 export type PaymentMethod = {
   id: string;
@@ -14,6 +15,42 @@ type SiteFooterProps = {
   categories: string[];
   paymentMethods: PaymentMethod[];
 };
+
+function FacebookIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M14 8.5h2V5.2c-.35-.05-1.55-.15-2.95-.15-2.92 0-4.92 1.78-4.92 5.05v2.85H5v3.7h3.13V24h3.85v-7.35h3.01l.48-3.7h-3.49v-2.48c0-1.07.29-1.97 2.02-1.97Z" />
+    </svg>
+  );
+}
+
+function InstagramIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden {...props}>
+      <rect width="17" height="17" x="3.5" y="3.5" rx="5" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="3.8" stroke="currentColor" strokeWidth="2" />
+      <circle cx="17.35" cy="6.65" r="1.1" fill="currentColor" />
+    </svg>
+  );
+}
+
+const socialLinks = [
+  {
+    href: "https://www.facebook.com/monceridps",
+    icon: FacebookIcon,
+    label: "Facebook",
+  },
+  {
+    href: "https://www.instagram.com/monceridps",
+    icon: InstagramIcon,
+    label: "Instagram",
+  },
+  {
+    href: "https://www.tiktok.com/@monceridps",
+    icon: Music2,
+    label: "TikTok",
+  },
+];
 
 function PaymentMethodBadge({ method }: { method: PaymentMethod }) {
   return (
@@ -83,9 +120,34 @@ export function SiteFooter({ categories, paymentMethods }: SiteFooterProps) {
           <div id="contacto" className="text-left">
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-white/75">Contacto</p>
             <div className="mt-4 space-y-3 text-sm text-white/86">
-              <p>hola@monceri.mx</p>
-              <p>WhatsApp directo para cotizaciones</p>
-              <p>Xalapa, Veracruz</p>
+              <p>WhatsApp: +52 228 411 31 48</p>
+              <p>Avenida Miguel Aleman #13, Xalapa, Veracruz</p>
+              <a
+                href="https://maps.app.goo.gl/fs5UqUDzZ4WJuph99?g_st=ipc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex text-white/86 transition hover:text-white"
+              >
+                Ver en Google Maps
+              </a>
+            </div>
+            <div className="mt-5 flex items-center gap-4">
+              {socialLinks.map((link) => {
+                const Icon = link.icon;
+
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                    className="text-white/82 transition hover:text-white"
+                  >
+                    <Icon className="size-5" />
+                  </a>
+                );
+              })}
             </div>
             <a
               href="#configurador"
