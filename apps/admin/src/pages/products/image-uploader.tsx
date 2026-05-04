@@ -1,5 +1,5 @@
 import { ArrowDownOutlined, ArrowUpOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Space, Tooltip, Upload, message } from "antd";
+import { App, Button, Space, Tooltip, Upload } from "antd";
 import type { UploadFile, UploadProps } from "antd";
 import type { ProductImageInput, UploadImageResponse } from "@monceri/shared";
 import { API_URL } from "@/providers/api-client";
@@ -28,7 +28,7 @@ function swapImages(images: ProductImageInput[], from: number, to: number) {
 }
 
 export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
-  const [messageApi, contextHolder] = message.useMessage();
+  const { notification } = App.useApp();
 
   function update(next: ProductImageInput[]) {
     onChange?.(next.map((image, index) => ({ ...image, sortOrder: index })));
@@ -62,7 +62,11 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
         ]);
         onSuccess?.(result);
       } catch (error) {
-        messageApi.error(error instanceof Error ? error.message : "No se pudo subir la imagen");
+        notification.error({
+          description: error instanceof Error ? error.message : "Verifica la imagen e intenta de nuevo.",
+          duration: 8,
+          message: "No se pudo subir la imagen",
+        });
         onError?.(error instanceof Error ? error : new Error("No se pudo subir la imagen"));
       }
     },
@@ -74,12 +78,20 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
     },
     beforeUpload: (file) => {
       if (!file.type.startsWith("image/")) {
-        messageApi.error("Solo imagenes");
+        notification.error({
+          description: "Sube un archivo JPG, PNG o WebP.",
+          duration: 8,
+          message: "Solo imagenes",
+        });
         return Upload.LIST_IGNORE;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        messageApi.error("Maximo 5 MB por imagen");
+        notification.error({
+          description: "Reduce el peso de la imagen antes de subirla.",
+          duration: 8,
+          message: "Maximo 5 MB por imagen",
+        });
         return Upload.LIST_IGNORE;
       }
 
@@ -89,7 +101,6 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
 
   return (
     <>
-      {contextHolder}
       <Upload {...uploadProps}>
         <button style={{ border: 0, background: "none" }} type="button">
           <PlusOutlined />

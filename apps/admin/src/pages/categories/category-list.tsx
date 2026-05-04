@@ -1,25 +1,39 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Popconfirm, Space, Switch, Table, Typography, message } from "antd";
+import { App, Button, Card, Popconfirm, Space, Switch, Table } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AdminEmptyState, AdminPageHeader } from "@/components/admin-page";
+import { notifyApiError } from "@/components/notify";
 import { apiRequest } from "@/providers/api-client";
 import type { AdminCategory } from "@/types";
 
 export function CategoryList() {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { notification } = App.useApp();
 
   async function load() {
-    setLoading(true);
-    setCategories(await apiRequest<AdminCategory[]>("/api/admin/categories"));
-    setLoading(false);
+    try {
+      setLoading(true);
+      setCategories(await apiRequest<AdminCategory[]>("/api/admin/categories"));
+    } catch (error) {
+      notifyApiError(notification, error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function remove(id: string) {
-    await apiRequest<void>(`/api/admin/categories/${id}`, { method: "DELETE" });
-    messageApi.success("Categoria desactivada");
-    await load();
+    try {
+      await apiRequest<void>(`/api/admin/categories/${id}`, { method: "DELETE" });
+      notification.success({
+        description: "La categoria se oculto sin borrar los productos asociados.",
+        message: "Categoria desactivada",
+      });
+      await load();
+    } catch (error) {
+      notifyApiError(notification, error);
+    }
   }
 
   useEffect(() => {
@@ -28,15 +42,16 @@ export function CategoryList() {
 
   return (
     <div>
-      {contextHolder}
-      <Space align="center" style={{ justifyContent: "space-between", width: "100%" }}>
-        <Typography.Title level={2}>Categorias</Typography.Title>
-        <Link to="/categories/create">
-          <Button icon={<PlusOutlined />} type="primary">
-            Nueva categoria
-          </Button>
-        </Link>
-      </Space>
+      <AdminPageHeader
+        actions={
+          <Link to="/categories/create">
+            <Button icon={<PlusOutlined />} type="primary">
+              Nueva categoria
+            </Button>
+          </Link>
+        }
+        title="Categorias"
+      />
       <Card>
         <Table
           columns={[
@@ -52,14 +67,14 @@ export function CategoryList() {
               render: (_value: unknown, record: AdminCategory) => (
                 <Space>
                   <Link to={`/categories/edit/${record.id}`}>
-                    <Button icon={<EditOutlined />} />
+                    <Button aria-label={`Editar ${record.name}`} icon={<EditOutlined />} />
                   </Link>
                   <Popconfirm
                     okText="Desactivar"
                     onConfirm={() => remove(record.id)}
-                    title="Desactivar categoria"
+                    title={`¿Borrar categoria "${record.name}"? Esto la ocultara del catalogo sin eliminar productos.`}
                   >
-                    <Button danger icon={<DeleteOutlined />} />
+                    <Button aria-label={`Desactivar ${record.name}`} danger icon={<DeleteOutlined />} />
                   </Popconfirm>
                 </Space>
               ),
@@ -68,6 +83,15 @@ export function CategoryList() {
           ]}
           dataSource={categories}
           loading={loading}
+          locale={{
+            emptyText: (
+              <AdminEmptyState
+                actionHref="/categories/create"
+                actionLabel="Crear primera categoria"
+                description="Aun no tienes categorias."
+              />
+            ),
+          }}
           rowKey="id"
           scroll={{ x: "max-content" }}
         />

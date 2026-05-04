@@ -1,8 +1,10 @@
-import { Button, Card, Descriptions, Input, Popconfirm, Space, Table, Typography, message } from "antd";
+import { App, Button, Card, Descriptions, Grid, Input, List, Popconfirm, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { OrderStatus } from "@monceri/shared";
+import { AdminPageHeader } from "@/components/admin-page";
 import { formatDate, formatMoney } from "@/components/formatters";
+import { notifyApiError } from "@/components/notify";
 import { OrderStatusTag } from "@/components/order-status-tag";
 import { apiRequest } from "@/providers/api-client";
 import type { AdminOrder } from "@/types";
@@ -18,16 +20,22 @@ export function OrderShow() {
   const params = useParams();
   const [order, setOrder] = useState<AdminOrder | null>(null);
   const [notes, setNotes] = useState("");
-  const [messageApi, contextHolder] = message.useMessage();
+  const { notification } = App.useApp();
+  const screens = Grid.useBreakpoint();
+  const isMobile = screens.xs && !screens.md;
 
   async function load() {
     if (!params.orderNumber) {
       return;
     }
 
-    const nextOrder = await apiRequest<AdminOrder>(`/api/admin/orders/${params.orderNumber}`);
-    setOrder(nextOrder);
-    setNotes(nextOrder.notes ?? "");
+    try {
+      const nextOrder = await apiRequest<AdminOrder>(`/api/admin/orders/${params.orderNumber}`);
+      setOrder(nextOrder);
+      setNotes(nextOrder.notes ?? "");
+    } catch (error) {
+      notifyApiError(notification, error);
+    }
   }
 
   async function updateStatus(status: OrderStatus) {
@@ -35,12 +43,22 @@ export function OrderShow() {
       return;
     }
 
-    await apiRequest<AdminOrder>(`/api/admin/orders/${order.orderNumber}/status`, {
-      body: JSON.stringify({ notes, status }),
-      method: "PATCH",
-    });
-    messageApi.success(status === "CONFIRMED" ? "Pedido confirmado. Stock actualizado y cupon consumido." : "Pedido actualizado");
-    await load();
+    try {
+      await apiRequest<AdminOrder>(`/api/admin/orders/${order.orderNumber}/status`, {
+        body: JSON.stringify({ notes, status }),
+        method: "PATCH",
+      });
+      notification.success({
+        description:
+          status === "CONFIRMED"
+            ? "Stock actualizado y cupon consumido una sola vez."
+            : "El estado del pedido quedo actualizado.",
+        message: status === "CONFIRMED" ? "Pedido confirmado" : "Pedido actualizado",
+      });
+      await load();
+    } catch (error) {
+      notifyApiError(notification, error);
+    }
   }
 
   useEffect(() => {
@@ -53,13 +71,9 @@ export function OrderShow() {
 
   return (
     <div>
-      {contextHolder}
-      <Space align="center" style={{ justifyContent: "space-between", width: "100%" }}>
-        <Typography.Title level={2}>{order.orderNumber}</Typography.Title>
-        <OrderStatusTag status={order.status} />
-      </Space>
+      <AdminPageHeader actions={<OrderStatusTag status={order.status} />} title={order.orderNumber} />
       <Card style={{ marginBottom: 16 }}>
-        <Descriptions bordered column={{ lg: 3, md: 2, xs: 1 }} title="Cliente">
+        <Descriptions bordered column={isMobile ? 1 : { lg: 3, md: 2, xs: 1 }} title="Cliente">
           <Descriptions.Item label="Nombre">{order.customerName}</Descriptions.Item>
           <Descriptions.Item label="Telefono">{order.customerPhone}</Descriptions.Item>
           <Descriptions.Item label="Email">{order.customerEmail || "-"}</Descriptions.Item>
@@ -68,31 +82,56 @@ export function OrderShow() {
         </Descriptions>
       </Card>
       <Card style={{ marginBottom: 16 }} title="Items">
-        <Table
-          columns={[
-            { dataIndex: "productName", title: "Producto" },
-            {
-              dataIndex: "variantData",
-              render: (variantData: Record<string, string>) => (
-                <Space direction="vertical" size={0}>
-                  {Object.entries(variantData).map(([label, value]) => (
-                    <span key={label}>
-                      <strong>{label}:</strong> {value}
-                    </span>
-                  ))}
-                </Space>
-              ),
-              title: "Detalle",
-            },
-            { dataIndex: "quantity", title: "Cantidad" },
-            { dataIndex: "unitPrice", render: (value: number) => formatMoney(value), title: "Unitario" },
-            { dataIndex: "subtotal", render: (value: number) => formatMoney(value), title: "Subtotal" },
-          ]}
-          dataSource={order.items}
-          pagination={false}
-          rowKey="id"
-          scroll={{ x: "max-content" }}
-        />
+        {isMobile ? (
+          <List
+            dataSource={order.items}
+            renderItem={(item) => (
+              <List.Item>
+                <List.Item.Meta
+                  title={item.productName}
+                  description={
+                    <Space direction="vertical" size={0}>
+                      {Object.entries(item.variantData).map(([label, value]) => (
+                        <span key={label}>
+                          <strong>{label}:</strong> {value}
+                        </span>
+                      ))}
+                      <span>
+                        {item.quantity} x {formatMoney(item.unitPrice)} = {formatMoney(item.subtotal)}
+                      </span>
+                    </Space>
+                  }
+                />
+              </List.Item>
+            )}
+          />
+        ) : (
+          <Table
+            columns={[
+              { dataIndex: "productName", title: "Producto" },
+              {
+                dataIndex: "variantData",
+                render: (variantData: Record<string, string>) => (
+                  <Space direction="vertical" size={0}>
+                    {Object.entries(variantData).map(([label, value]) => (
+                      <span key={label}>
+                        <strong>{label}:</strong> {value}
+                      </span>
+                    ))}
+                  </Space>
+                ),
+                title: "Detalle",
+              },
+              { dataIndex: "quantity", title: "Cantidad" },
+              { dataIndex: "unitPrice", render: (value: number) => formatMoney(value), title: "Unitario" },
+              { dataIndex: "subtotal", render: (value: number) => formatMoney(value), title: "Subtotal" },
+            ]}
+            dataSource={order.items}
+            pagination={false}
+            rowKey="id"
+            scroll={{ x: "max-content" }}
+          />
+        )}
       </Card>
       <Card style={{ marginBottom: 16 }} title="Totales">
         <Descriptions bordered column={{ md: 3, xs: 1 }}>
@@ -103,7 +142,7 @@ export function OrderShow() {
       </Card>
       <Card title="Notas y acciones">
         <Input.TextArea onChange={(event) => setNotes(event.target.value)} rows={4} value={notes} />
-        <Space wrap style={{ marginTop: 16 }}>
+        <Space className="admin-mobile-full" direction={isMobile ? "vertical" : "horizontal"} wrap={!isMobile} style={{ marginTop: 16 }}>
           {nextActions
             .filter((action) => action.from.includes(order.status))
             .map((action) => (
@@ -116,7 +155,11 @@ export function OrderShow() {
               </Button>
             ))}
           {!["DELIVERED", "CANCELLED"].includes(order.status) ? (
-            <Popconfirm okText="Cancelar" onConfirm={() => updateStatus("CANCELLED")} title="Cancelar pedido">
+            <Popconfirm
+              okText="Cancelar pedido"
+              onConfirm={() => updateStatus("CANCELLED")}
+              title={`¿Cancelar pedido ${order.orderNumber}? Esto detendra su avance operativo.`}
+            >
               <Button danger>Cancelar</Button>
             </Popconfirm>
           ) : null}

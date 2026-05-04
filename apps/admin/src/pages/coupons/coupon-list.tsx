@@ -1,23 +1,40 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Popconfirm, Space, Switch, Table, Tag, Typography, message } from "antd";
+import { App, Button, Card, Popconfirm, Space, Switch, Table, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AdminEmptyState, AdminPageHeader } from "@/components/admin-page";
 import { formatDate, formatMoney } from "@/components/formatters";
+import { notifyApiError } from "@/components/notify";
 import { apiRequest } from "@/providers/api-client";
 import type { AdminCoupon } from "@/types";
 
 export function CouponList() {
   const [coupons, setCoupons] = useState<AdminCoupon[]>([]);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(true);
+  const { notification } = App.useApp();
 
   async function load() {
-    setCoupons(await apiRequest<AdminCoupon[]>("/api/admin/coupons"));
+    try {
+      setLoading(true);
+      setCoupons(await apiRequest<AdminCoupon[]>("/api/admin/coupons"));
+    } catch (error) {
+      notifyApiError(notification, error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function remove(id: string) {
-    await apiRequest<void>(`/api/admin/coupons/${id}`, { method: "DELETE" });
-    messageApi.success("Cupon desactivado");
-    await load();
+    try {
+      await apiRequest<void>(`/api/admin/coupons/${id}`, { method: "DELETE" });
+      notification.success({
+        description: "El cupon dejo de aplicarse en nuevos pedidos.",
+        message: "Cupon desactivado",
+      });
+      await load();
+    } catch (error) {
+      notifyApiError(notification, error);
+    }
   }
 
   useEffect(() => {
@@ -26,15 +43,16 @@ export function CouponList() {
 
   return (
     <div>
-      {contextHolder}
-      <Space align="center" style={{ justifyContent: "space-between", width: "100%" }}>
-        <Typography.Title level={2}>Cupones</Typography.Title>
-        <Link to="/coupons/create">
-          <Button icon={<PlusOutlined />} type="primary">
-            Nuevo cupon
-          </Button>
-        </Link>
-      </Space>
+      <AdminPageHeader
+        actions={
+          <Link to="/coupons/create">
+            <Button icon={<PlusOutlined />} type="primary">
+              Nuevo cupon
+            </Button>
+          </Link>
+        }
+        title="Cupones"
+      />
       <Card>
         <Table
           columns={[
@@ -68,10 +86,14 @@ export function CouponList() {
               render: (_value: unknown, record: AdminCoupon) => (
                 <Space>
                   <Link to={`/coupons/edit/${record.id}`}>
-                    <Button icon={<EditOutlined />} />
+                    <Button aria-label={`Editar cupon ${record.code}`} icon={<EditOutlined />} />
                   </Link>
-                  <Popconfirm okText="Desactivar" onConfirm={() => remove(record.id)} title="Desactivar cupon">
-                    <Button danger icon={<DeleteOutlined />} />
+                  <Popconfirm
+                    okText="Desactivar"
+                    onConfirm={() => remove(record.id)}
+                    title={`¿Borrar cupon "${record.code}"? Dejaria de aplicarse en nuevos pedidos.`}
+                  >
+                    <Button aria-label={`Desactivar cupon ${record.code}`} danger icon={<DeleteOutlined />} />
                   </Popconfirm>
                 </Space>
               ),
@@ -79,6 +101,16 @@ export function CouponList() {
             },
           ]}
           dataSource={coupons}
+          loading={loading}
+          locale={{
+            emptyText: (
+              <AdminEmptyState
+                actionHref="/coupons/create"
+                actionLabel="Crear primer cupon"
+                description="Aun no tienes cupones."
+              />
+            ),
+          }}
           rowKey="id"
           scroll={{ x: "max-content" }}
         />

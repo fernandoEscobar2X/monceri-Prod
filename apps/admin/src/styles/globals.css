@@ -1,0 +1,65 @@
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.font-display {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.monceri-card-lift {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.monceri-card-lift:hover {
+  transform: translateY(-2px);
+}
+
+.admin-page-header {
+  margin-bottom: 20px;
+}
+
+.admin-page-title {
+  margin: 0;
+}
+
+.admin-responsive-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .admin-responsive-actions,
+  .admin-responsive-actions .ant-btn,
+  .admin-responsive-actions a {
+    width: 100%;
+  }
+
+  .admin-mobile-full,
+  .admin-mobile-full .ant-btn {
+    width: 100%;
+  }
+
+  .ant-layout-header {
+    padding-inline: 12px !important;
+  }
+
+  .ant-card .ant-card-body {
+    padding: 16px;
+  }
+}
