@@ -68,7 +68,7 @@ export const CONFIGURATOR_SIZES = [
     width: "155cm",
     widthCm: 155,
     height: "35cm",
-    maxLettersPerLine: 30,
+    maxLettersPerLine: 20,
     maxLines: 2,
     basePrice: 3200,
     perCharacterPrice: 0,
