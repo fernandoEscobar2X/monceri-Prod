@@ -10,9 +10,10 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ZodError } from "zod";
 import { env, readJwtKeys } from "./config/env";
-import { closeDatabaseConnection } from "./lib/database";
+import { checkDatabaseConnection, closeDatabaseConnection } from "./lib/database";
 import { AppError } from "./lib/errors";
 import { registerAuthRoutes } from "./modules/auth/auth.routes";
+import { tokenRevocationService } from "./modules/auth/token-revocation.service";
 import { registerCategoryRoutes } from "./modules/categories/categories.routes";
 import { registerCollectionRoutes } from "./modules/collections/collections.routes";
 import { registerCouponRoutes } from "./modules/coupons/coupons.routes";
@@ -31,9 +32,28 @@ export async function buildServer() {
 
   const keys = readJwtKeys();
 
-  await app.register(helmet);
+  await app.register(helmet, {
+    contentSecurityPolicy: {
+      directives: {
+        connectSrc: ["'self'", env.WEB_FRONTEND_URL, env.ADMIN_FRONTEND_URL],
+        defaultSrc: ["'self'"],
+        fontSrc: ["'self'", "https:", "data:"],
+        frameAncestors: ["'none'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        objectSrc: ["'none'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        ...(env.NODE_ENV === "production" ? { upgradeInsecureRequests: [] } : {}),
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  });
   await app.register(cors, {
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
+    maxAge: 86_400,
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     origin: [env.ADMIN_FRONTEND_URL, env.WEB_FRONTEND_URL],
   });
   await app.register(cookie, {
@@ -42,11 +62,17 @@ export async function buildServer() {
   await app.register(jwt, {
     cookie: {
       cookieName: "monceri_admin_token",
-      signed: false,
+      signed: true,
     },
     sign: {
       algorithm: "RS256",
+      aud: "monceri-admin",
       expiresIn: "15m",
+      iss: env.JWT_ISSUER,
+    },
+    verify: {
+      allowedAud: "monceri-admin",
+      allowedIss: env.JWT_ISSUER,
     },
     secret: {
       private: keys.privateKey,
@@ -86,6 +112,19 @@ export async function buildServer() {
       });
     }
 
+    const httpError = error as { code?: unknown; message?: string; statusCode?: number };
+
+    if (
+      typeof httpError.statusCode === "number" &&
+      httpError.statusCode >= 400 &&
+      httpError.statusCode < 500
+    ) {
+      return reply.status(httpError.statusCode).send({
+        code: typeof httpError.code === "string" ? httpError.code : "HTTP_ERROR",
+        message: httpError.message ?? "Solicitud invalida",
+      });
+    }
+
     app.log.error(error);
     return reply.status(500).send({
       code: "INTERNAL_SERVER_ERROR",
@@ -93,7 +132,23 @@ export async function buildServer() {
     });
   });
 
-  app.get("/health", async () => ({ ok: true }));
+  app.get("/health", async (_request, reply) => {
+    try {
+      await checkDatabaseConnection();
+
+      return {
+        db: "ok",
+        ok: true,
+        timestamp: new Date().toISOString(),
+      };
+    } catch {
+      return reply.status(503).send({
+        db: "error",
+        ok: false,
+        timestamp: new Date().toISOString(),
+      });
+    }
+  });
 
   await app.register(registerCategoryRoutes, { prefix: "/api" });
   await app.register(registerCollectionRoutes, { prefix: "/api" });
@@ -105,7 +160,15 @@ export async function buildServer() {
   await app.register(registerDashboardRoutes, { prefix: "/api/admin" });
   await app.register(registerUploadRoutes, { prefix: "/api/admin" });
 
+  const revocationCleanupTimer = setInterval(() => {
+    void tokenRevocationService.cleanupExpired().catch((error: unknown) => {
+      app.log.error(error, "Error cleaning expired revoked tokens");
+    });
+  }, 60 * 60 * 1000);
+  revocationCleanupTimer.unref();
+
   app.addHook("onClose", async () => {
+    clearInterval(revocationCleanupTimer);
     await closeDatabaseConnection();
   });
 

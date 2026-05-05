@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductPurchase } from "@/components/product/product-purchase";
 import { formatPrice } from "@/lib/formatters/price";
+import { safeJsonLd } from "@/lib/json-ld";
 import { fetchProduct, productImageUrl } from "@/lib/products";
 
 type ProductPageProps = {
@@ -53,7 +54,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] text-[#111827]">
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} type="application/ld+json" />
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <Link href="/" className="font-display text-2xl font-black tracking-tight">

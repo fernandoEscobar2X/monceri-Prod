@@ -9,6 +9,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_PRIVATE_KEY_PATH: z.string().min(1),
   JWT_PUBLIC_KEY_PATH: z.string().min(1),
+  JWT_ISSUER: z.string().url(),
   COOKIE_SECRET: z.string().min(32),
   WHATSAPP_PHONE_NUMBER: z.string().min(8),
   ADMIN_FRONTEND_URL: z.string().url(),

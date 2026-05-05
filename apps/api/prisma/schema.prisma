@@ -8,14 +8,24 @@ datasource db {
 }
 
 model AdminUser {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String
-  role      AdminRole @default(ADMIN)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  lastLogin DateTime?
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String
+  name             String
+  role             AdminRole @default(ADMIN)
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastLogin        DateTime?
+}
+
+model RevokedToken {
+  jti       String   @id
+  expiresAt DateTime
+  revokedAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
 
 enum AdminRole {

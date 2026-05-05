@@ -21,8 +21,7 @@ La API solo acepta requests de `ADMIN_FRONTEND_URL` y `WEB_FRONTEND_URL` definid
 La cookie de sesion admin se setea con:
 
 - `httpOnly: true`
-- `sameSite: lax` en desarrollo
-- `sameSite: strict` en produccion
+- `sameSite: strict` en desarrollo y produccion
 - `secure: false` en desarrollo
 - `secure: true` en produccion
 - `path: /`

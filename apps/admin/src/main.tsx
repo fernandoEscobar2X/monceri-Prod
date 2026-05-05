@@ -13,6 +13,7 @@ import { AdminLayout } from "@/components/admin-layout";
 import { RequireAuth } from "@/components/require-auth";
 import { authProvider } from "@/providers/auth-provider";
 import { dataProvider } from "@/providers/data-provider";
+import { ChangePasswordPage } from "@/pages/account/change-password-page";
 import { CategoryForm } from "@/pages/categories/category-form";
 import { CategoryList } from "@/pages/categories/category-list";
 import { CollectionForm } from "@/pages/collections/collection-form";
@@ -62,6 +63,7 @@ function ThemedApp() {
               <Route element={<RequireAuth />}>
                 <Route element={<AdminLayout />}>
                   <Route element={<Navigate replace to="/dashboard" />} index />
+                  <Route element={<ChangePasswordPage />} path="/account/password" />
                   <Route element={<DashboardPage />} path="/dashboard" />
                   <Route element={<ProductList />} path="/products" />
                   <Route element={<ProductForm />} path="/products/create" />

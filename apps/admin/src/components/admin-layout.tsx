@@ -2,6 +2,7 @@ import {
   AppstoreOutlined,
   BarChartOutlined,
   CalendarOutlined,
+  KeyOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -11,8 +12,9 @@ import {
   ShoppingOutlined,
   SunOutlined,
   TagsOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Button, Grid, Layout, Menu, Space, Tooltip, Typography, theme } from "antd";
+import { Breadcrumb, Button, Dropdown, Grid, Layout, Menu, Space, Tooltip, Typography, theme } from "antd";
 import type { ItemType } from "antd/es/menu/interface";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -51,6 +53,7 @@ export function AdminLayout() {
   const breadcrumbItems = useMemo(() => {
     const [section, actionOrId] = location.pathname.split("/").filter(Boolean);
     const rootBySection: Record<string, { label: string; to: string }> = {
+      account: { label: "Cuenta", to: "/account/password" },
       categories: { label: "Categorias", to: "/categories" },
       collections: { label: "Temporadas", to: "/collections" },
       coupons: { label: "Cupones", to: "/coupons" },
@@ -68,6 +71,8 @@ export function AdminLayout() {
       items.push({ title: <span>Editar</span> });
     } else if (section === "orders" && actionOrId) {
       items.push({ title: <span>{actionOrId}</span> });
+    } else if (section === "account" && actionOrId === "password") {
+      items.push({ title: <span>Contrasena</span> });
     }
 
     return items;
@@ -134,9 +139,29 @@ export function AdminLayout() {
                 type="text"
               />
             </Tooltip>
-            <Button icon={<LogoutOutlined />} onClick={logout}>
-              {isMobile ? "" : "Salir"}
-            </Button>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    icon: <KeyOutlined />,
+                    key: "password",
+                    label: "Cambiar contrasena",
+                    onClick: () => navigate("/account/password"),
+                  },
+                  {
+                    danger: true,
+                    icon: <LogoutOutlined />,
+                    key: "logout",
+                    label: "Salir",
+                    onClick: logout,
+                  },
+                ],
+              }}
+              placement="bottomRight"
+              trigger={["click"]}
+            >
+              <Button icon={<UserOutlined />}>{isMobile ? "" : "Cuenta"}</Button>
+            </Dropdown>
           </Space>
         </Layout.Header>
         <Layout.Content style={{ padding: isMobile ? 16 : 24 }}>
