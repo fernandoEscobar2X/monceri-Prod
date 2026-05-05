@@ -5,8 +5,10 @@ import type { ProductImageInput, UploadImageResponse } from "@monceri/shared";
 import { API_URL } from "@/providers/api-client";
 
 type ImageUploaderProps = {
+  maxCount?: number;
   value?: ProductImageInput[];
   onChange?: (value: ProductImageInput[]) => void;
+  uploadLabel?: string;
 };
 
 function toUploadFile(image: ProductImageInput, index: number): UploadFile {
@@ -27,7 +29,12 @@ function swapImages(images: ProductImageInput[], from: number, to: number) {
   return next;
 }
 
-export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
+export function ImageUploader({
+  maxCount,
+  onChange,
+  uploadLabel = "Subir",
+  value = [],
+}: ImageUploaderProps) {
   const { notification } = App.useApp();
 
   function update(next: ProductImageInput[]) {
@@ -51,15 +58,14 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
         }
 
         const result = (await response.json()) as UploadImageResponse;
-        update([
-          ...value,
-          {
-            alt: "",
-            sortOrder: value.length,
-            thumbnailUrl: result.thumbnailUrl,
-            url: result.url,
-          },
-        ]);
+        const nextImage = {
+          alt: "",
+          sortOrder: maxCount === 1 ? 0 : value.length,
+          thumbnailUrl: result.thumbnailUrl,
+          url: result.url,
+        };
+
+        update(maxCount === 1 ? [nextImage] : [...value, nextImage]);
         onSuccess?.(result);
       } catch (error) {
         notification.error({
@@ -72,7 +78,8 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
     },
     fileList: value.map(toUploadFile),
     listType: "picture-card",
-    multiple: true,
+    maxCount,
+    multiple: maxCount !== 1,
     onRemove: (file) => {
       update(value.filter((image) => image.url !== file.url));
     },
@@ -101,12 +108,14 @@ export function ImageUploader({ onChange, value = [] }: ImageUploaderProps) {
 
   return (
     <>
-      <Upload {...uploadProps}>
-        <button style={{ border: 0, background: "none" }} type="button">
-          <PlusOutlined />
-          <div style={{ marginTop: 8 }}>Subir</div>
-        </button>
-      </Upload>
+      {maxCount && value.length >= maxCount ? null : (
+        <Upload {...uploadProps}>
+          <button style={{ border: 0, background: "none" }} type="button">
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>{uploadLabel}</div>
+          </button>
+        </Upload>
+      )}
       <Space wrap>
         {value.map((image, index) => (
           <Space key={image.url}>

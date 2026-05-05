@@ -48,6 +48,27 @@ export const categoryRules = {
   sortOrder: [{ type: "integer", message: "El orden debe ser un numero entero." }] satisfies Rule[],
 };
 
+export const collectionRules = {
+  ctaLabel: [{ max: 30, message: "El CTA no debe pasar de 30 caracteres." }] satisfies Rule[],
+  description: [
+    { max: 1000, message: "La descripcion no debe pasar de 1000 caracteres." },
+  ] satisfies Rule[],
+  name: [
+    { required: true, message: "El nombre es obligatorio." },
+    { min: 2, message: "El nombre debe tener al menos 2 caracteres." },
+    { max: 80, message: "El nombre no debe pasar de 80 caracteres." },
+  ] satisfies Rule[],
+  slug: [
+    { required: true, message: "El slug es obligatorio." },
+    { min: 2, message: "El slug debe tener al menos 2 caracteres." },
+    {
+      pattern: slugPattern,
+      message: "El slug solo permite letras minusculas, numeros y guiones.",
+    },
+  ] satisfies Rule[],
+  tagline: [{ max: 120, message: "El texto corto no debe pasar de 120 caracteres." }] satisfies Rule[],
+};
+
 export const couponRules = {
   code: [
     { required: true, message: "El codigo es obligatorio." },

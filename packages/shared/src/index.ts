@@ -1,6 +1,7 @@
 export * from "./primitives";
 export * from "./schemas/auth";
 export * from "./schemas/category";
+export * from "./schemas/collection";
 export * from "./schemas/configurator";
 export * from "./schemas/coupon";
 export * from "./schemas/dashboard";

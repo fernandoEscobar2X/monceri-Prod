@@ -15,6 +15,8 @@ import { authProvider } from "@/providers/auth-provider";
 import { dataProvider } from "@/providers/data-provider";
 import { CategoryForm } from "@/pages/categories/category-form";
 import { CategoryList } from "@/pages/categories/category-list";
+import { CollectionForm } from "@/pages/collections/collection-form";
+import { CollectionList } from "@/pages/collections/collection-list";
 import { CouponForm } from "@/pages/coupons/coupon-form";
 import { CouponList } from "@/pages/coupons/coupon-list";
 import { DashboardPage } from "@/pages/dashboard/dashboard-page";
@@ -47,6 +49,7 @@ function ThemedApp() {
             resources={[
               { name: "dashboard", list: "/dashboard" },
               { create: "/products/create", edit: "/products/edit/:id", list: "/products", name: "products" },
+              { create: "/collections/create", edit: "/collections/edit/:id", list: "/collections", name: "collections" },
               { create: "/categories/create", edit: "/categories/edit/:id", list: "/categories", name: "categories" },
               { list: "/orders", show: "/orders/:orderNumber", name: "orders" },
               { list: "/inventory", name: "inventory" },
@@ -63,6 +66,9 @@ function ThemedApp() {
                   <Route element={<ProductList />} path="/products" />
                   <Route element={<ProductForm />} path="/products/create" />
                   <Route element={<ProductForm />} path="/products/edit/:id" />
+                  <Route element={<CollectionList />} path="/collections" />
+                  <Route element={<CollectionForm />} path="/collections/create" />
+                  <Route element={<CollectionForm />} path="/collections/edit/:id" />
                   <Route element={<CategoryList />} path="/categories" />
                   <Route element={<CategoryForm />} path="/categories/create" />
                   <Route element={<CategoryForm />} path="/categories/edit/:id" />

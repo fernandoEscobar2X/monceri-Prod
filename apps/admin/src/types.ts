@@ -1,5 +1,6 @@
 import type {
   Category,
+  Collection,
   Coupon,
   Order,
   ProductSummary,
@@ -17,6 +18,8 @@ export type AdminProduct = ProductSummary & {
   createdAt?: string;
   updatedAt?: string;
 };
+
+export type AdminCollection = Collection;
 
 export type AdminCoupon = Coupon & {
   createdAt?: string;

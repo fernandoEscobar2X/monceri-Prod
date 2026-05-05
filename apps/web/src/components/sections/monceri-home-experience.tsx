@@ -11,8 +11,10 @@ import { CasesSection } from "@/components/sections/cases-section";
 import { ConfiguratorPreviewSection } from "@/components/sections/configurator-preview-section";
 import { GallerySection } from "@/components/sections/gallery-section";
 import { HeroSection } from "@/components/sections/hero-section";
+import { HomeBannerCollection } from "@/components/sections/home-banner-collection";
 import { ProductLinesSection } from "@/components/sections/product-lines-section";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
+import type { Collection } from "@monceri/shared";
 import {
   anatomyDetailStyle,
   announcementItems,
@@ -29,10 +31,14 @@ import { formatPrice } from "@/lib/formatters/price";
 import { useCartStore } from "@/stores/cart";
 
 type MonceriHomePrototypeProps = {
+  bannerCollection?: Collection | null;
   featuredProducts?: ProductCard[];
 };
 
-export function MonceriHomePrototype({ featuredProducts = fallbackSuggestedProducts }: MonceriHomePrototypeProps) {
+export function MonceriHomePrototype({
+  bannerCollection = null,
+  featuredProducts = fallbackSuggestedProducts,
+}: MonceriHomePrototypeProps) {
   const [isMobileViewport, setIsMobileViewport] = useState<boolean | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -115,6 +121,7 @@ export function MonceriHomePrototype({ featuredProducts = fallbackSuggestedProdu
       </div>
 
       <HeroSection heroInstallationStyle={heroInstallationStyle} />
+      <HomeBannerCollection collection={bannerCollection} />
       <ConfiguratorPreviewSection promoBannerStyle={promoBannerStyle} />
       <Configurator {...configurator} />
       <CasesSection anatomyDetailStyle={anatomyDetailStyle} />

@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   BarChartOutlined,
+  CalendarOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -21,6 +22,7 @@ import { useThemeStore } from "@/stores/theme";
 const menuItems: ItemType[] = [
   { icon: <BarChartOutlined />, key: "/dashboard", label: "Dashboard" },
   { icon: <ProductOutlined />, key: "/products", label: "Productos" },
+  { icon: <CalendarOutlined />, key: "/collections", label: "Temporadas" },
   { icon: <TagsOutlined />, key: "/categories", label: "Categorias" },
   { icon: <ShoppingOutlined />, key: "/orders", label: "Pedidos" },
   { icon: <AppstoreOutlined />, key: "/inventory", label: "Inventario" },
@@ -50,6 +52,7 @@ export function AdminLayout() {
     const [section, actionOrId] = location.pathname.split("/").filter(Boolean);
     const rootBySection: Record<string, { label: string; to: string }> = {
       categories: { label: "Categorias", to: "/categories" },
+      collections: { label: "Temporadas", to: "/collections" },
       coupons: { label: "Cupones", to: "/coupons" },
       dashboard: { label: "Dashboard", to: "/dashboard" },
       inventory: { label: "Inventario", to: "/inventory" },

@@ -14,6 +14,7 @@ import { closeDatabaseConnection } from "./lib/database";
 import { AppError } from "./lib/errors";
 import { registerAuthRoutes } from "./modules/auth/auth.routes";
 import { registerCategoryRoutes } from "./modules/categories/categories.routes";
+import { registerCollectionRoutes } from "./modules/collections/collections.routes";
 import { registerCouponRoutes } from "./modules/coupons/coupons.routes";
 import { registerDashboardRoutes } from "./modules/dashboard/dashboard.routes";
 import { registerInventoryRoutes } from "./modules/inventory/inventory.routes";
@@ -95,6 +96,7 @@ export async function buildServer() {
   app.get("/health", async () => ({ ok: true }));
 
   await app.register(registerCategoryRoutes, { prefix: "/api" });
+  await app.register(registerCollectionRoutes, { prefix: "/api" });
   await app.register(registerProductRoutes, { prefix: "/api" });
   await app.register(registerCouponRoutes, { prefix: "/api" });
   await app.register(registerOrderRoutes, { prefix: "/api" });

@@ -58,9 +58,48 @@ model Product {
   updatedAt       DateTime         @updatedAt
   orderItems      OrderItem[]
   stockMovements  StockMovement[]
+  collections     ProductCollection[]
 
   @@index([categoryId])
   @@index([active, featured])
+}
+
+model Collection {
+  id                       String              @id @default(cuid())
+  name                     String
+  slug                     String              @unique
+  tagline                  String?
+  description              String?             @db.Text
+  bannerImageUrl           String?
+  bannerImageThumbnailUrl  String?
+  popupImageUrl            String?
+  popupImageThumbnailUrl   String?
+  ctaLabel                 String?
+  startsAt                 DateTime?
+  endsAt                   DateTime?
+  active                   Boolean             @default(true)
+  showInPopup              Boolean             @default(false)
+  sortOrder                Int                 @default(0)
+  products                 ProductCollection[]
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+
+  @@index([active, startsAt, endsAt])
+  @@index([showInPopup, active])
+}
+
+model ProductCollection {
+  id           String     @id @default(cuid())
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId String
+  sortOrder    Int        @default(0)
+  createdAt    DateTime   @default(now())
+
+  @@unique([productId, collectionId])
+  @@index([collectionId])
+  @@index([productId])
 }
 
 model ProductImage {
