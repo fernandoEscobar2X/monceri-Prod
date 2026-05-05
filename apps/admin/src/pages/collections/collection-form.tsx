@@ -123,7 +123,6 @@ export function CollectionForm() {
   const [submitting, setSubmitting] = useState(false);
   const [selectorOpen, setSelectorOpen] = useState(false);
   const [selectorValue, setSelectorValue] = useState<string[]>([]);
-  const [hasErrors, setHasErrors] = useState(false);
   const [activeSection, setActiveSection] = useState("general");
   const isEdit = Boolean(params.id);
   const productIds = Form.useWatch("productIds", form) ?? [];
@@ -399,9 +398,6 @@ export function CollectionForm() {
           <Form<CollectionValues>
             form={form}
             layout="vertical"
-            onFieldsChange={() => {
-              setHasErrors(form.getFieldsError().some((field) => field.errors.length > 0));
-            }}
             onFinish={submit}
             onFinishFailed={handleFinishFailed}
             validateTrigger={["onBlur", "onChange"]}
@@ -415,7 +411,7 @@ export function CollectionForm() {
             ) : (
               <Tabs activeKey={activeSection} items={sections} onChange={setActiveSection} />
             )}
-            <Button disabled={hasErrors} htmlType="submit" loading={submitting} type="primary">
+            <Button htmlType="submit" loading={submitting} type="primary">
               Guardar temporada
             </Button>
           </Form>

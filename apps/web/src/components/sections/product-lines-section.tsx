@@ -26,7 +26,7 @@ export function ProductLinesSection({
               Te puede interesar
             </p>
             <h2 className="font-display mt-4 text-4xl font-black tracking-tight text-[#111827] sm:text-5xl">
-              Productos predisenados con vibes de showroom.
+              Productos predisenados destacados.
             </h2>
           </div>
           <Link href="/catalogo" className="text-sm font-bold uppercase tracking-[0.2em] text-[#111827]">
@@ -60,9 +60,9 @@ export function ProductLinesSection({
                   <span className="text-lg font-bold text-[#111827]">{formatPrice(product.price)}</span>
                   <Link
                     href={`/producto/${product.slug}`}
-                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold !text-white transition-colors hover:bg-black hover:!text-white"
                   >
-                    Ver detalle
+                    <span className="text-white">Ver detalle</span>
                   </Link>
                 </div>
               </div>

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, MessageCircle, Search, ShoppingCart, X } from "lucide-react";
+import Link from "next/link";
 
 type SiteHeaderProps = {
   cartCount: number;
@@ -15,7 +16,6 @@ type SiteHeaderProps = {
 
 export function SiteHeader({
   cartCount,
-  categories,
   mobileMenuOpen,
   onCloseMobileMenu,
   onOpenCart,
@@ -43,18 +43,15 @@ export function SiteHeader({
           </div>
 
           <nav className="hidden items-center gap-8 text-sm font-semibold text-gray-600 lg:flex">
-            <button
-              type="button"
-              onClick={() => onScrollToSection("configurador")}
-              className="transition hover:text-[#111827]"
-            >
+            <Link href="/#configurador" className="transition hover:text-[#111827]">
               Configurador
-            </button>
-            {categories.map((category) => (
-              <a key={category} href="#catalogo" className="transition hover:text-[#111827]">
-                {category}
-              </a>
-            ))}
+            </Link>
+            <Link href="/catalogo" className="transition hover:text-[#111827]">
+              Catalogo
+            </Link>
+            <Link href="/#contacto" className="transition hover:text-[#111827]">
+              Contacto
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -131,20 +128,19 @@ export function SiteHeader({
 
                 <nav className="grid gap-2 text-left">
                   {[
-                    { id: "inicio", label: "Inicio" },
-                    { id: "configurador", label: "Configurador" },
-                    { id: "catalogo", label: "Catalogo" },
-                    { id: "contacto", label: "Contacto" },
+                    { href: "/#configurador", label: "Configurador" },
+                    { href: "/catalogo", label: "Catalogo" },
+                    { href: "/#contacto", label: "Contacto" },
                   ].map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => onScrollToSection(item.id)}
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobileMenu}
                       className="flex items-center justify-between rounded-2xl border border-gray-200 bg-[#FAFAFA] px-4 py-3 text-sm font-semibold text-[#111827]"
                     >
                       {item.label}
                       <ArrowRight className="size-4 text-[#E63946]" />
-                    </button>
+                    </Link>
                   ))}
                 </nav>
 
