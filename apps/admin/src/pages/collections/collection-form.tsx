@@ -174,26 +174,27 @@ export function CollectionForm() {
   }, [form, notification, params.id]);
 
   async function submit(values: CollectionValues) {
-    const banner = values.bannerImages[0];
-    const popup = values.popupImages[0];
-    const payload = {
-      active: values.active,
-      bannerImageThumbnailUrl: banner?.thumbnailUrl ?? null,
-      bannerImageUrl: banner?.url ?? null,
-      ctaLabel: values.ctaLabel || null,
-      description: values.description || null,
-      endsAt: values.endsAt ? values.endsAt.toISOString() : null,
-      name: values.name,
-      popupImageThumbnailUrl: popup?.thumbnailUrl ?? null,
-      popupImageUrl: popup?.url ?? null,
-      showInPopup: values.showInPopup,
-      slug: values.slug,
-      sortOrder: values.sortOrder,
-      startsAt: values.startsAt ? values.startsAt.toISOString() : null,
-      tagline: values.tagline || null,
-    };
-
     try {
+      const banner = values.bannerImages?.[0];
+      const popup = values.popupImages?.[0];
+      const productIds = values.productIds ?? [];
+      const payload = {
+        active: values.active,
+        bannerImageThumbnailUrl: banner?.thumbnailUrl ?? null,
+        bannerImageUrl: banner?.url ?? null,
+        ctaLabel: values.ctaLabel || null,
+        description: values.description || null,
+        endsAt: values.endsAt ? values.endsAt.toISOString() : null,
+        name: values.name,
+        popupImageThumbnailUrl: popup?.thumbnailUrl ?? null,
+        popupImageUrl: popup?.url ?? null,
+        showInPopup: values.showInPopup,
+        slug: values.slug,
+        sortOrder: values.sortOrder,
+        startsAt: values.startsAt ? values.startsAt.toISOString() : null,
+        tagline: values.tagline || null,
+      };
+
       setSubmitting(true);
       const collection = await apiRequest<AdminCollection>(
         isEdit ? `/api/admin/collections/${params.id}` : "/api/admin/collections",
@@ -203,7 +204,7 @@ export function CollectionForm() {
         },
       );
       await apiRequest<AdminCollection>(`/api/admin/collections/${collection.id}/products`, {
-        body: JSON.stringify({ productIds: values.productIds }),
+        body: JSON.stringify({ productIds }),
         method: "POST",
       });
       notification.success({
@@ -382,10 +383,10 @@ export function CollectionForm() {
   );
 
   const sections = [
-    { children: generalSection, key: "general", label: "General" },
-    { children: imageSection, key: "images", label: "Imagenes" },
-    { children: validitySection, key: "validity", label: "Vigencia" },
-    { children: productsSection, key: "products", label: "Productos" },
+    { children: generalSection, forceRender: true, key: "general", label: "General" },
+    { children: imageSection, forceRender: true, key: "images", label: "Imagenes" },
+    { children: validitySection, forceRender: true, key: "validity", label: "Vigencia" },
+    { children: productsSection, forceRender: true, key: "products", label: "Productos" },
   ];
 
   return (
