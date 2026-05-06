@@ -29,7 +29,10 @@ export function CatalogPagination({ page, searchParams, totalPages }: CatalogPag
   return (
     <nav className="mt-10 flex flex-wrap items-center justify-center gap-2">
       {page > 1 ? (
-        <Link className="px-3 py-2 text-sm font-semibold text-[#111827]" href={hrefForPage(searchParams, page - 1)}>
+        <Link
+          className="px-3 py-2 text-sm font-semibold text-[#111827] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]"
+          href={hrefForPage(searchParams, page - 1)}
+        >
           Anterior
         </Link>
       ) : null}
@@ -37,15 +40,18 @@ export function CatalogPagination({ page, searchParams, totalPages }: CatalogPag
         <Link
           key={currentPage}
           className={`inline-flex size-10 items-center justify-center rounded-xl text-sm font-bold ${
-            currentPage === page ? "bg-[#111827] text-white" : "text-[#111827] hover:bg-gray-100"
-          }`}
+            currentPage === page ? "bg-[#111827] !text-white" : "text-[#111827] hover:bg-gray-100"
+          } focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]`}
           href={hrefForPage(searchParams, currentPage)}
         >
           {currentPage}
         </Link>
       ))}
       {page < totalPages ? (
-        <Link className="px-3 py-2 text-sm font-semibold text-[#111827]" href={hrefForPage(searchParams, page + 1)}>
+        <Link
+          className="px-3 py-2 text-sm font-semibold text-[#111827] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]"
+          href={hrefForPage(searchParams, page + 1)}
+        >
           Siguiente
         </Link>
       ) : null}

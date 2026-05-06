@@ -26,15 +26,18 @@ export function ProductLinesSection({
               Te puede interesar
             </p>
             <h2 className="font-display mt-4 text-4xl font-black tracking-tight text-[#111827] sm:text-5xl">
-              Productos predisenados destacados.
+              Productos prediseñados destacados.
             </h2>
           </div>
-          <Link href="/catalogo" className="text-sm font-bold uppercase tracking-[0.2em] text-[#111827]">
-            Ver catalogo completo
+          <Link
+            href="/catalogo"
+            className="text-sm font-bold uppercase tracking-[0.2em] text-[#111827] transition hover:text-[#E63946] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]"
+          >
+            Ver catálogo completo
           </Link>
         </div>
 
-        <p className="mt-4 text-sm text-gray-500 sm:hidden">Desliza para ver mas productos.</p>
+        <p className="mt-4 text-sm text-gray-500 sm:hidden">Desliza para ver más productos.</p>
 
         <div
           className="no-scrollbar -mx-4 mt-8 flex gap-4 overflow-x-auto px-4 pb-4 snap-x snap-mandatory sm:mx-0 sm:mt-10 sm:gap-5 sm:px-0"
@@ -60,7 +63,7 @@ export function ProductLinesSection({
                   <span className="text-lg font-bold text-[#111827]">{formatPrice(product.price)}</span>
                   <Link
                     href={`/producto/${product.slug}`}
-                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold !text-white transition-colors hover:bg-black hover:!text-white"
+                    className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-[#111827] px-4 text-sm font-semibold !text-white transition-colors hover:bg-black hover:!text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#E63946]"
                   >
                     <span className="text-white">Ver detalle</span>
                   </Link>
