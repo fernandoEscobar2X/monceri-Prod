@@ -31,26 +31,49 @@ export const ordersRepository = {
     discount: number;
     input: CreateOrderInput;
     items: PricedOrderItem[];
-    orderNumber: string;
     subtotal: number;
     total: number;
   }) {
-    return prisma.order.create({
-      data: {
-        couponId: args.couponId,
-        customerEmail: args.input.customerEmail || null,
-        customerName: args.input.customerName,
-        customerPhone: args.input.customerPhone,
-        discount: args.discount,
-        orderNumber: args.orderNumber,
-        subtotal: args.subtotal,
-        total: args.total,
-        items: {
-          create: args.items,
+    return prisma.$transaction(async (tx) => {
+      const orderNumber = await ordersRepository.nextOrderNumber(tx);
+
+      return tx.order.create({
+        data: {
+          couponId: args.couponId,
+          customerEmail: args.input.customerEmail || null,
+          customerName: args.input.customerName,
+          customerPhone: args.input.customerPhone,
+          discount: args.discount,
+          orderNumber,
+          subtotal: args.subtotal,
+          total: args.total,
+          items: {
+            create: args.items,
+          },
+        },
+        include: { items: true },
+      });
+    });
+  },
+
+  async nextOrderNumber(tx: Prisma.TransactionClient, now = new Date()) {
+    const year = now.getFullYear();
+    const counter = await tx.orderCounter.upsert({
+      create: {
+        lastNumber: 1,
+        year,
+      },
+      update: {
+        lastNumber: {
+          increment: 1,
         },
       },
-      include: { items: true },
+      where: {
+        year,
+      },
     });
+
+    return `MNC-${year}-${String(counter.lastNumber).padStart(3, "0")}`;
   },
 
   markWhatsappSent(orderNumber: string) {
@@ -102,6 +125,19 @@ export const ordersRepository = {
             quantity: -item.quantity,
             reason: `Orden confirmada ${order.orderNumber}`,
             type: "SALE",
+          },
+        });
+      }
+
+      if (order.couponId) {
+        await tx.coupon.update({
+          data: {
+            usedCount: {
+              increment: 1,
+            },
+          },
+          where: {
+            id: order.couponId,
           },
         });
       }

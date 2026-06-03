@@ -21,3 +21,9 @@ Un letrero personalizado no existe como SKU terminado antes de venderse. Bloquea
 - El admin debe exponer `trackStock` al crear/editar producto.
 - Inventario muestra productos sin stock como `Control manual`.
 - Variantes con `stock = null` heredan control por producto o control manual.
+
+## Nota De Seguridad
+
+El check de stock al crear orden es preventivo y no transaccional. La proteccion real de inventario ocurre al confirmar el pedido en admin, donde el descuento se ejecuta dentro de una transaccion.
+
+Esto se acepta para v1 porque la confirmacion es manual y el volumen esperado es bajo. Si el volumen crece, el check inicial debe moverse a una transaccion o reserva temporal de stock.

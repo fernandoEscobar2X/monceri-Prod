@@ -3,16 +3,19 @@ import "@fastify/jwt";
 declare module "@fastify/jwt" {
   interface FastifyJWT {
     payload: {
-      sub: string;
       email: string;
-      role: "ADMIN" | "SUPERADMIN";
+      jti: string;
       name: string;
+      role: "ADMIN" | "SUPERADMIN";
+      sub: string;
     };
     user: {
-      sub: string;
       email: string;
-      role: "ADMIN" | "SUPERADMIN";
+      exp?: number;
+      jti?: string;
       name: string;
+      role: "ADMIN" | "SUPERADMIN";
+      sub: string;
     };
   }
 }

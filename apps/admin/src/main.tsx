@@ -1,100 +1,94 @@
 import "@refinedev/antd/dist/reset.css";
-import {
-  Refine,
-  type BaseRecord,
-  type CreateParams,
-  type DataProvider,
-  type DeleteOneParams,
-  type GetListParams,
-  type GetOneParams,
-  type UpdateParams,
-} from "@refinedev/core";
+import "@/styles/globals.css";
+import "dayjs/locale/es";
+import { Refine } from "@refinedev/core";
 import { useNotificationProvider } from "@refinedev/antd";
-import { App as AntdApp, ConfigProvider, Typography } from "antd";
+import routerProvider from "@refinedev/react-router";
+import { App as AntdApp, ConfigProvider, theme as antdTheme } from "antd";
 import esES from "antd/locale/es_ES";
+import dayjs from "dayjs";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AdminLayout } from "@/components/admin-layout";
+import { RequireAuth } from "@/components/require-auth";
+import { authProvider } from "@/providers/auth-provider";
+import { dataProvider } from "@/providers/data-provider";
+import { ChangePasswordPage } from "@/pages/account/change-password-page";
+import { CategoryForm } from "@/pages/categories/category-form";
+import { CategoryList } from "@/pages/categories/category-list";
+import { CollectionForm } from "@/pages/collections/collection-form";
+import { CollectionList } from "@/pages/collections/collection-list";
+import { CouponForm } from "@/pages/coupons/coupon-form";
+import { CouponList } from "@/pages/coupons/coupon-list";
+import { DashboardPage } from "@/pages/dashboard/dashboard-page";
+import { InventoryPage } from "@/pages/inventory/inventory-page";
+import { LoginPage } from "@/pages/login/login-page";
+import { OrderList } from "@/pages/orders/order-list";
+import { OrderShow } from "@/pages/orders/order-show";
+import { ProductForm } from "@/pages/products/product-form";
+import { ProductList } from "@/pages/products/product-list";
+import { useThemeStore } from "@/stores/theme";
+import { monceriDarkTheme, monceriLightTheme } from "@/theme/monceri-theme";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:4000";
+dayjs.locale("es");
 
-async function readJson<T>(response: Response) {
-  return (await response.json()) as T;
-}
+function ThemedApp() {
+  const mode = useThemeStore((state) => state.mode);
+  const themeConfig =
+    mode === "dark"
+      ? { ...monceriDarkTheme, algorithm: antdTheme.darkAlgorithm }
+      : { ...monceriLightTheme, algorithm: antdTheme.defaultAlgorithm };
 
-const dataProvider: DataProvider = {
-  create: async <TData extends BaseRecord = BaseRecord, TVariables = Record<string, unknown>>({
-    resource,
-    variables,
-  }: CreateParams<TVariables>) => {
-    const response = await fetch(`${API_URL}/api/admin/${resource}`, {
-      body: JSON.stringify(variables),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-    });
-    return { data: await readJson<TData>(response) };
-  },
-  deleteOne: async <TData extends BaseRecord = BaseRecord, TVariables = Record<string, unknown>>({
-    id,
-    resource,
-  }: DeleteOneParams<TVariables>) => {
-    await fetch(`${API_URL}/api/admin/${resource}/${id}`, {
-      credentials: "include",
-      method: "DELETE",
-    });
-    return { data: { id } as TData };
-  },
-  getApiUrl: () => API_URL,
-  getList: async <TData extends BaseRecord = BaseRecord>({ resource }: GetListParams) => {
-    const response = await fetch(`${API_URL}/api/admin/${resource}`, { credentials: "include" });
-    const data = await readJson<TData[]>(response);
-    return { data, total: data.length };
-  },
-  getOne: async <TData extends BaseRecord = BaseRecord>({ id, resource }: GetOneParams) => {
-    const response = await fetch(`${API_URL}/api/admin/${resource}/${id}`, { credentials: "include" });
-    return { data: await readJson<TData>(response) };
-  },
-  update: async <TData extends BaseRecord = BaseRecord, TVariables = Record<string, unknown>>({
-    id,
-    resource,
-    variables,
-  }: UpdateParams<TVariables>) => {
-    const response = await fetch(`${API_URL}/api/admin/${resource}/${id}`, {
-      body: JSON.stringify(variables),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      method: "PATCH",
-    });
-    return { data: await readJson<TData>(response) };
-  },
-};
-
-function Dashboard() {
   return (
-    <main style={{ minHeight: "100vh", padding: 24 }}>
-      <Typography.Title level={2}>Panel Monceri</Typography.Title>
-      <Typography.Paragraph>
-        Base admin Refine lista para conectar recursos de productos, pedidos, inventario y cupones.
-      </Typography.Paragraph>
-    </main>
+    <ConfigProvider locale={esES} theme={themeConfig}>
+      <AntdApp notification={{ duration: 4.5, placement: "topRight" }}>
+        <BrowserRouter>
+          <Refine
+            authProvider={authProvider}
+            dataProvider={dataProvider}
+            notificationProvider={useNotificationProvider}
+            resources={[
+              { name: "dashboard", list: "/dashboard" },
+              { create: "/products/create", edit: "/products/edit/:id", list: "/products", name: "products" },
+              { create: "/collections/create", edit: "/collections/edit/:id", list: "/collections", name: "collections" },
+              { create: "/categories/create", edit: "/categories/edit/:id", list: "/categories", name: "categories" },
+              { list: "/orders", show: "/orders/:orderNumber", name: "orders" },
+              { list: "/inventory", name: "inventory" },
+              { create: "/coupons/create", edit: "/coupons/edit/:id", list: "/coupons", name: "coupons" },
+            ]}
+            routerProvider={routerProvider}
+          >
+            <Routes>
+              <Route element={<LoginPage />} path="/login" />
+              <Route element={<RequireAuth />}>
+                <Route element={<AdminLayout />}>
+                  <Route element={<Navigate replace to="/dashboard" />} index />
+                  <Route element={<ChangePasswordPage />} path="/account/password" />
+                  <Route element={<DashboardPage />} path="/dashboard" />
+                  <Route element={<ProductList />} path="/products" />
+                  <Route element={<ProductForm />} path="/products/create" />
+                  <Route element={<ProductForm />} path="/products/edit/:id" />
+                  <Route element={<CollectionList />} path="/collections" />
+                  <Route element={<CollectionForm />} path="/collections/create" />
+                  <Route element={<CollectionForm />} path="/collections/edit/:id" />
+                  <Route element={<CategoryList />} path="/categories" />
+                  <Route element={<CategoryForm />} path="/categories/create" />
+                  <Route element={<CategoryForm />} path="/categories/edit/:id" />
+                  <Route element={<OrderList />} path="/orders" />
+                  <Route element={<OrderShow />} path="/orders/:orderNumber" />
+                  <Route element={<InventoryPage />} path="/inventory" />
+                  <Route element={<CouponList />} path="/coupons" />
+                  <Route element={<CouponForm />} path="/coupons/create" />
+                  <Route element={<CouponForm />} path="/coupons/edit/:id" />
+                </Route>
+              </Route>
+              <Route element={<Navigate replace to="/dashboard" />} path="*" />
+            </Routes>
+          </Refine>
+        </BrowserRouter>
+      </AntdApp>
+    </ConfigProvider>
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <ConfigProvider locale={esES}>
-    <AntdApp>
-      <Refine
-        dataProvider={dataProvider}
-        notificationProvider={useNotificationProvider}
-        resources={[
-          { name: "products", list: "/" },
-          { name: "categories", list: "/" },
-          { name: "orders", list: "/" },
-          { name: "inventory", list: "/" },
-          { name: "coupons", list: "/" },
-        ]}
-      >
-        <Dashboard />
-      </Refine>
-    </AntdApp>
-  </ConfigProvider>,
-);
+createRoot(document.getElementById("root")!).render(<ThemedApp />);

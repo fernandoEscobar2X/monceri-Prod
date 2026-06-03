@@ -13,11 +13,12 @@ export type ConfiguratorFont = z.infer<typeof ConfiguratorFontSchema>;
 export const ConfiguratorSizeSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
+  width: z.string().min(1),
   widthCm: z.number().int().positive(),
-  heightCm: z.number().int().positive(),
+  height: z.string().min(1),
   basePrice: z.number().int().min(0),
   perCharacterPrice: z.number().int().min(0),
-  maxCharactersPerLine: z.number().int().positive(),
+  maxLettersPerLine: z.number().int().positive(),
   maxLines: z.number().int().positive(),
 });
 export type ConfiguratorSize = z.infer<typeof ConfiguratorSizeSchema>;
@@ -30,7 +31,7 @@ export const ConfiguratorColorSchema = z.object({
 export type ConfiguratorColor = z.infer<typeof ConfiguratorColorSchema>;
 
 export const ConfiguratorInputSchema = z.object({
-  phrase: z.string().min(1),
+  phrase: z.string().trim().min(3).max(120),
   fontId: z.string().min(1),
   sizeId: z.string().min(1),
   colorIds: z.array(z.string().min(1)).min(1),

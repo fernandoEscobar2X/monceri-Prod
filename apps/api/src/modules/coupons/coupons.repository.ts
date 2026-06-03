@@ -34,4 +34,11 @@ export const couponsRepository = {
       where: { id },
     });
   },
+
+  delete(id: string) {
+    return prisma.coupon.update({
+      data: { active: false },
+      where: { id },
+    });
+  },
 };

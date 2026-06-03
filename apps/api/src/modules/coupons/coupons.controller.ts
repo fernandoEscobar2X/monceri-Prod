@@ -1,5 +1,10 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { CouponUpsertSchema, CouponValidateSchema } from "@monceri/shared";
+import {
+  CouponIdParamsSchema,
+  CouponUpdateSchema,
+  CouponUpsertSchema,
+  CouponValidateSchema,
+} from "./coupons.schemas";
 import { couponsService } from "./coupons.service";
 
 export async function validateCoupon(request: FastifyRequest, reply: FastifyReply) {
@@ -11,13 +16,24 @@ export async function listAdminCoupons(_request: FastifyRequest, reply: FastifyR
   return reply.send(await couponsService.listAdmin());
 }
 
+export async function getAdminCoupon(request: FastifyRequest, reply: FastifyReply) {
+  const params = CouponIdParamsSchema.parse(request.params);
+  return reply.send(await couponsService.findById(params.id));
+}
+
 export async function createCoupon(request: FastifyRequest, reply: FastifyReply) {
   const input = CouponUpsertSchema.parse(request.body);
   return reply.status(201).send(await couponsService.create(input));
 }
 
 export async function updateCoupon(request: FastifyRequest, reply: FastifyReply) {
-  const params = request.params as { id: string };
-  const input = CouponUpsertSchema.partial().parse(request.body);
+  const params = CouponIdParamsSchema.parse(request.params);
+  const input = CouponUpdateSchema.parse(request.body);
   return reply.send(await couponsService.update(params.id, input));
+}
+
+export async function deleteCoupon(request: FastifyRequest, reply: FastifyReply) {
+  const params = CouponIdParamsSchema.parse(request.params);
+  await couponsService.delete(params.id);
+  return reply.status(204).send();
 }
